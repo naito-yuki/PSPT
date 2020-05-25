@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
       title: 'マイコレ',
       theme: ThemeData(
         primarySwatch: Colors.red,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       initialRoute: '/',
       routes: {
