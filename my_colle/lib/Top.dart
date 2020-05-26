@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:my_colle/Style.dart';
 
 class Top extends StatelessWidget {
+
   Size size;
+
   @override
   Widget build(BuildContext context) {
     this.size = MediaQuery.of(context).size;
@@ -131,7 +133,7 @@ class Top extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/ColleDtl');
+                        Navigator.pushNamed(context, '/CreMyRm');
                       },
                       padding: EdgeInsets.all(0.0),
                     ),
