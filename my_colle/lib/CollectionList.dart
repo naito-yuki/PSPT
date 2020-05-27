@@ -7,6 +7,7 @@ class CollectionList extends StatelessWidget {
   
   Size size;
   int userNo;
+  BuildContext context;
   
   CollectionList({Key key, this.userNo}): super(key: key);
   
@@ -15,6 +16,7 @@ class CollectionList extends StatelessWidget {
     
     // 画面サイズ
     this.size = MediaQuery.of(context).size;
+    this.context = context;
     
     // collectionのリストを取得(今は固定)
     CollectionDao dao = new CollectionDao();
@@ -102,6 +104,11 @@ class CollectionList extends StatelessWidget {
       ),
       onPressed: () {
           // collection詳細画面に遷移
+          Navigator.pushNamed(
+            this.context, 
+            '/ColleDtl',
+            // arguments: collection
+          );
       },
     );
   }
