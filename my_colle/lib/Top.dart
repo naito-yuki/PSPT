@@ -106,7 +106,7 @@ class Top extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/ColleDtl');
+                        Navigator.pushNamed(context, '/CtgrLst');
                       },
                       padding: EdgeInsets.all(0.0),
                     ),
