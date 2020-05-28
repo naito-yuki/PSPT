@@ -10,8 +10,15 @@ class CreateMyRoom extends StatefulWidget {
 }
 
 class _CreateMyRoomState extends State<CreateMyRoom> {
+  String titleText;
   File imageFile;
   String categoryVal = Data.categoryList[1];
+
+  void setTitleText(String str) {
+    setState(() {
+      titleText = str;
+    });
+  }
 
   void _getImageFromDevice(ImageSource source) async {
     var imageFile = await ImagePicker.pickImage(source: source);
@@ -77,6 +84,8 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                 child: TextField(
                   keyboardType: TextInputType.multiline,
                   maxLines: 1,
+                  onChanged: setTitleText,
+                  onSubmitted: setTitleText,
                 ),
               ),
               Text(
@@ -149,7 +158,11 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   padding: EdgeInsets.all(10.0),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/MyRmTop');
+                  Navigator.pushNamed(
+                    context,
+                    '/MyRmTop',
+                    arguments: titleText,
+                  );
                 },
                 padding: EdgeInsets.all(0.0),
               ),
