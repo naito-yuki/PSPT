@@ -4,7 +4,7 @@ class MyRoomTop extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     Size screenSize = MediaQuery.of(context).size;
-    String roomName = ModalRoute.of(context).settings.arguments;
+    String roomName = "MY ROOM";
     String userName = "Mr.J";
     return Scaffold(
       body: Container(
@@ -26,7 +26,7 @@ class MyRoomTop extends StatelessWidget{
                 child: Center(
                   child: Text(roomName,
                     style: TextStyle(
-                      fontSize: 27,
+                      fontSize: 32,
                       color: Colors.white,
                     ),
                   ),
