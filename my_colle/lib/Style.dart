@@ -9,7 +9,7 @@ class Style extends SizedBox {
     color: Color(0xffcf3e3e),
     fontWeight: FontWeight.normal,
     letterSpacing: 0.5,
-    fontSize: 30.0,
+    fontSize: 18.0,
     fontFamily: font,
     locale: Locale("ja", "JP"),
   );
@@ -19,7 +19,7 @@ class Style extends SizedBox {
     color: Color(0xff000000),
     fontWeight: FontWeight.normal,
     letterSpacing: 0.5,
-    fontSize: 20.0,
+    fontSize: 14.0,
     fontFamily: font,
     locale: Locale("ja", "JP"),
   );

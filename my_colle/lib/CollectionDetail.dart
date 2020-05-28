@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:my_colle/dto/Collection.dart';
 
 class CollectionDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Collection collection = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(),
       body: Center(
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Image.asset('images/meat_the_beatles.jpg'),
+          Image.asset(collection.imageUrl),
           Card(
             child: Column(
               children: <Widget>[
-                Text('超レアなブートレッグ版',
+                Text(collection.collectionName,
                   style: TextStyle(
                     color: Colors.red,
                     fontSize: 25,
                     decoration: TextDecoration.underline, 
                   ),
                 ),
-                Text('*****************************\n**********************'),
+                Text(collection.description),
               ],
             ),
           ),

@@ -9,7 +9,7 @@ class CollectionDao {
     List<Collection> collectionList = new List<Collection>();
     
     // DBの中身を想定
-    collectionList.add(new Collection(1, userNo, 'images/beatles.jpg', "**********", "*********************"));
+    collectionList.add(new Collection(1, userNo, 'images/meat_the_beatles.jpg', "超レアなブートレッグ版", "*****************************\n**********************"));
     collectionList.add(new Collection(2, userNo, 'images/beatles.jpg', "**********", "*********************"));
     collectionList.add(new Collection(3, userNo, 'images/beatles.jpg', "**********", "*********************"));
     collectionList.add(new Collection(4, userNo, 'images/beatles.jpg', "**********", "*********************"));

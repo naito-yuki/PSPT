@@ -47,15 +47,12 @@ class CollectionList extends StatelessWidget {
           // collection追加画面に遷移
         },
       );
-      
     }
     
-    return MaterialApp(
-      theme: Theme.of(context),
-      home: Scaffold(
-        body: ListView(children: collectionWidgetList),
-        floatingActionButton: plusButton,
-      ),
+    return Scaffold(
+      appBar: AppBar(),
+      body: ListView(children: collectionWidgetList),
+      floatingActionButton: plusButton,
     );
   }
   
@@ -107,7 +104,7 @@ class CollectionList extends StatelessWidget {
           Navigator.pushNamed(
             this.context, 
             '/ColleDtl',
-            // arguments: collection
+            arguments: collection
           );
       },
     );
