@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_colle/Top.dart';
 import 'package:my_colle/CategoryList.dart';
+import 'package:my_colle/CategoryDetailList.dart';
 import 'package:my_colle/MyRoomTop.dart';
 import 'package:my_colle/CollectionList.dart';
 import 'package:my_colle/CollectionDetail.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => Top(),
         '/CtgrLst': (context) => CategoryList(),
+        '/CtgDtlLst': (context) => CategoryDetailList(),
         '/MyRmTop': (context) => MyRoomTop(),
         '/ColleLst':(context) => CollectionList(),
         '/ColleDtl': (context) => CollectionDetail(),

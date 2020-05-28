@@ -133,13 +133,11 @@ class CategoryList extends StatelessWidget {
                           leading: Icon(iconlist[index]),
                         ),
                       ),
-                      // onTap: () {
-                      //   Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute(
-                      //           builder: (context) =>
-                      //               MyHomePageDetail(textlist[index])));
-                      // },
+                      onTap: () {
+                        Navigator.pushNamed(
+                            context, '/CtgDtlLst',
+                            arguments: textlist[index]);
+                      },
                     );
                   }),
                 ),
