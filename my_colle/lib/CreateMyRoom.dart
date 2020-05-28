@@ -122,7 +122,7 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                 ],
               ),
               (imageFile == null)
-              ? Icon(Icons.no_sim)
+              ? SizedBox(height: 200.0)
               : Image.file(imageFile,
                 height: 200.0,
                 width: 200.0,
@@ -149,7 +149,7 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   padding: EdgeInsets.all(10.0),
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, '/CreMyRm');
+                  Navigator.pushNamed(context, '/MyRmTop');
                 },
                 padding: EdgeInsets.all(0.0),
               ),
