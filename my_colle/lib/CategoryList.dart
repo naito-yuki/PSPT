@@ -73,20 +73,20 @@ class CategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'MY ROOM',
-                  style: TextStyle(
-                    fontSize: 35,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ))
-          ],
-        ),
+        // title: Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: [
+        //     Container(
+        //         padding: const EdgeInsets.all(8.0),
+        //         child: Text(
+        //           'MY ROOM',
+        //           style: TextStyle(
+        //             fontSize: 35,
+        //             fontWeight: FontWeight.bold,
+        //           ),
+        //         ))
+        //   ],
+        // ),
       ),
       body: new Container(
           decoration: new BoxDecoration(

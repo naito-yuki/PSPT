@@ -12,7 +12,7 @@ class CreateMyRoom extends StatefulWidget {
 class _CreateMyRoomState extends State<CreateMyRoom> {
   String titleText;
   File imageFile;
-  String categoryVal = Data.categoryList[1];
+  String categoryVal = Data.categoryList[0];
 
   void setTitleText(String str) {
     setState(() {

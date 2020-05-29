@@ -26,19 +26,16 @@ class UserVoiceList extends StatelessWidget {
       userVoiceWidgetList.add(createUserVoiceWidget(userVoice));
     });
     
-    return MaterialApp(
-      theme: Theme.of(context),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Center(
-            child: Text(
-              'User\'s Voice',
-              // style: PsStyle.bigTytleStyle
-            ),
-          ),
-        ),
-        body: ListView(children: userVoiceWidgetList),
+    return Scaffold(
+      appBar: AppBar(
+        // title: Center(
+        //   child: Text(
+        //     'User\'s Voice',
+        //     // style: PsStyle.bigTytleStyle
+        //   ),
+        // ),
       ),
+      body: ListView(children: userVoiceWidgetList),
     );
   }
   
