@@ -44,7 +44,7 @@ class CollectionList extends StatelessWidget {
         ),
         padding: EdgeInsets.all(0.0),
         onPressed: () {
-          // collection追加画面に遷移
+          Navigator.pushNamed(context,'/CollePst',);
         },
       );
     }

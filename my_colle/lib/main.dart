@@ -7,6 +7,7 @@ import 'package:my_colle/CollectionList.dart';
 import 'package:my_colle/CollectionDetail.dart';
 import 'package:my_colle/UserVoiceList.dart';
 import 'package:my_colle/CreateMyRoom.dart';
+import 'package:my_colle/CollectionPost.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,10 +27,11 @@ class MyApp extends StatelessWidget {
         '/CtgrLst': (context) => CategoryList(),
         '/CtgDtlLst': (context) => CategoryDetailList(),
         '/MyRmTop': (context) => MyRoomTop(),
-        '/ColleLst':(context) => CollectionList(),
+        '/ColleLst':(context) => CollectionList(userNo: 1,),
         '/ColleDtl': (context) => CollectionDetail(),
         '/UsrVcLst': (context) => UserVoiceList(),
         '/CreMyRm': (context) => CreateMyRoom(),
+        '/CollePst':(context) => CollectionPost(),
       },
     );
   }
