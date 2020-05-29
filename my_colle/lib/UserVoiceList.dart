@@ -35,7 +35,16 @@ class UserVoiceList extends StatelessWidget {
         //   ),
         // ),
       ),
-      body: ListView(children: userVoiceWidgetList),
+      body: Container(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: AssetImage('images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: ListView(children: userVoiceWidgetList),
+      ),
+
     );
   }
   
@@ -49,6 +58,7 @@ class UserVoiceList extends StatelessWidget {
       margin: EdgeInsets.all(2.0),
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xff0070c0)),
+        color: Colors.white,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

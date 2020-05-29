@@ -51,7 +51,15 @@ class CollectionList extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(),
-      body: ListView(children: collectionWidgetList),
+      body: Container(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: AssetImage('images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: ListView(children: collectionWidgetList),
+      ),
       floatingActionButton: plusButton,
     );
   }
@@ -86,6 +94,7 @@ class CollectionList extends StatelessWidget {
               padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 border: Border.all(color: Color(0xffcf3e3e)),
+                color: Colors.white,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

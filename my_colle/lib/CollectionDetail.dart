@@ -10,7 +10,14 @@ class CollectionDetail extends StatelessWidget {
     Collection collection = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(),
-      body: Center(
+      body: Container(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: AssetImage('images/background.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -56,6 +63,7 @@ class CollectionDetail extends StatelessWidget {
             },
           ),
         ],
+      ),
       ),
       ),
     );
