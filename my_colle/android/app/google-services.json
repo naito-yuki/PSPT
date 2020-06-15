@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "73354980745",
+    "firebase_url": "https://pspt-mycolle.firebaseio.com",
+    "project_id": "pspt-mycolle",
+    "storage_bucket": "pspt-mycolle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73354980745:android:60a54777d9f342b69c8558",
+        "android_client_info": {
+          "package_name": "com.example.my_colle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73354980745-vetq6eo97vk5cinf902ehgnig2cq0vdv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBawNv-rEWBSokxBFbEhojimmRgOvNY9Gc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73354980745-vetq6eo97vk5cinf902ehgnig2cq0vdv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
