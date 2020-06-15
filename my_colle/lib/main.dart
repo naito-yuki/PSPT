@@ -9,6 +9,7 @@ import 'package:my_colle/UserVoiceList.dart';
 import 'package:my_colle/CreateMyRoom.dart';
 import 'package:my_colle/CollectionPost.dart';
 import 'package:my_colle/TestDB.dart';
+import 'package:my_colle/TestStorage.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      initialRoute: '/',
+      initialRoute: '/TestStorage',
       routes: {
         '/': (context) => Top(),
         '/CtgrLst': (context) => CategoryList(),
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/CreMyRm': (context) => CreateMyRoom(),
         '/CollePst':(context) => CollectionPost(),
         '/TestDB':(context) => TestDB(),
+        '/TestStorage':(context) => TestStorage(),
       },
     );
   }
