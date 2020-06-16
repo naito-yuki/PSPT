@@ -78,7 +78,7 @@ class _CollectionPostState extends State<CollectionPost> {
               Row(
                 children: <Widget>[
                   Text(
-                    'トップページ画像',
+                    '画像',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
