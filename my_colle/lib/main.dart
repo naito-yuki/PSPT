@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_colle/Login.dart';
 import 'package:my_colle/Top.dart';
 import 'package:my_colle/CategoryList.dart';
 import 'package:my_colle/CategoryDetailList.dart';
@@ -23,9 +24,10 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      initialRoute: '/TestStorage',
+      initialRoute: '/Login',
       routes: {
-        '/': (context) => Top(),
+        '/Login': (context) => Login(),
+        '/Top': (context) => Top(),
         '/CtgrLst': (context) => CategoryList(),
         '/CtgDtlLst': (context) => CategoryDetailList(),
         '/MyRmTop': (context) => MyRoomTop(),
