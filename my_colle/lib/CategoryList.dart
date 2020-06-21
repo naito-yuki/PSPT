@@ -10,23 +10,23 @@ import 'package:flutter/material.dart';
 
 class CategoryList extends StatelessWidget {
   List<String> textlist = [
-    '・家電、AV、カメラ',
-    '・音楽、CD、レコード',
-    '・本、雑誌、漫画',
-    '・映画',
-    '・キャラクター関連',
-    '・鉄道、航空、車、バイク',
-    '・ミリタリー',
-    '・ファッション',
-    '・アクセサリー、時計',
-    '・住まい、インテリア',
-    '・自然科学',
-    '・スポーツ',
-    '・食品、飲料',
-    '・エンタテインメントグッズ',
-    '・記念品、切手、コイン系',
-    '・アート絵画工芸品',
-    '・おまけ、懸賞品系',
+    '家電、AV、カメラ',
+    '音楽、CD、レコード',
+    '本、雑誌、漫画',
+    '映画',
+    'キャラクター関連',
+    '鉄道、航空、車、バイク',
+    'ミリタリー',
+    'ファッション',
+    'アクセサリー、時計',
+    '住まい、インテリア',
+    '自然科学',
+    'スポーツ',
+    '食品、飲料',
+    'エンタテインメントグッズ',
+    '記念品、切手、コイン系',
+    'アート絵画工芸品',
+    'おまけ、懸賞品系',
   ];
 
   List<String> subTextlist = [
@@ -117,7 +117,7 @@ class CategoryList extends StatelessWidget {
                       child: Card(
                         child: ListTile(
                           title: Text(
-                            textlist[index],
+                            "・${textlist[index]}",
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.black,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // void main() => runApp(new MyApp());
 
@@ -17,44 +18,12 @@ import 'package:flutter/material.dart';
 //   }
 // }
 
-class CategoryDetailList extends StatefulWidget {
-  @override
-  _CategoryDetailListState createState() => new _CategoryDetailListState();
-}
-
-class _CategoryDetailListState extends State<CategoryDetailList> {
-  List<String> textlist = [
-    'ビートルズマニア向け',
-    '洋楽ロックコレクション',
-    '歌謡曲JPOPたくさん',
-    'AOR、R&B、ソウル',
-    'ヘヴィメタ',
-    'ソウルソング',
-    '昔懐かしいバラード',
-    '人気のKPOP',
-    '世界に1つだけの花'
-  ];
-
+class CategoryDetailList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var categorytitle =ModalRoute.of(context).settings.arguments;
-    return new Scaffold(
-      appBar: new AppBar(
-        // title: Row(
-        //   mainAxisAlignment: MainAxisAlignment.center,
-        //   children: [
-        //     Container(
-        //         padding: const EdgeInsets.all(8.0),
-        //         child: Text(
-        //           'MY ROOM',
-        //           style: TextStyle(
-        //             fontSize: 35,
-        //             fontWeight: FontWeight.bold,
-        //           ),
-        //         ))
-        //   ],
-        // ),
-      ),
+    return Scaffold(
+      appBar: new AppBar(),
       body: new Container(
           decoration: new BoxDecoration(
             image: new DecorationImage(
@@ -110,34 +79,53 @@ class _CategoryDetailListState extends State<CategoryDetailList> {
               ),
               Container(
                 height: 480,
-                child: ListView(
-                  children: List.generate(textlist.length, (index) {
-                    return InkWell(
-                      child: Card(
-                        child: ListTile(
-                          title: Text(
-                            textlist[index],
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          subtitle: Text(
-                              "********************************************************************************"),
-                          leading: Icon(Icons.person),
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(
-                            context, '/MyRmTop',
-                            arguments: textlist[index]);
-                      },
-                    );
-                  }),
-                ),
+                child: _CategoryDetailListState(),
               )
             ],
           )),
+    );
+  }
+}
+
+class _CategoryDetailListState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var categorytitle =ModalRoute.of(context).settings.arguments;
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('myroom').where("category", isEqualTo: categorytitle).snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError) return new Text('Error:');
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return new Text('Loading...');
+          default:
+            return new ListView(
+              children:
+                  snapshot.data.documents.map((DocumentSnapshot document) {
+                return InkWell(
+                  child: Card(
+                    child: ListTile(
+                      title: new Text(
+                        document['title'],
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: new Text(document['body']),
+                      leading: Icon(Icons.person),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context, '/MyRmTop',
+                          arguments: document['title']);
+                      },
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+        }
+      },
     );
   }
 }
