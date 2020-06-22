@@ -1,14 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_colle/Style.dart';
+import 'package:my_colle/Auth.dart';
 
 class Top extends StatelessWidget {
-
-  Size size;
+  Size _size;
 
   @override
   Widget build(BuildContext context) {
-    this.size = MediaQuery.of(context).size;
-    
+    this._size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(),
       endDrawer: Drawer(),
@@ -24,7 +25,7 @@ class Top extends StatelessWidget {
           Column(            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Style.height(this.size.height/6.8),
+              Style.height(this._size.height/6.8),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -77,9 +78,9 @@ class Top extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Color(0xffad0000).withOpacity(0.9),
                 ),
-                width: this.size.width - 20,
+                width: this._size.width - 20,
               ),
-              Style.height(this.size.height/3.4),
+              Style.height(this._size.height/3.4),
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +134,17 @@ class Top extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/CreMyRm');
+                        Firestore.instance.collection('myroom')
+                        .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
+                        .then((value) {
+                          value.documents.isNotEmpty
+                          ? Navigator.pushNamed(
+                            context,
+                            '/MyRmTop',
+                            arguments: Auth.authResult.user.uid,
+                          )
+                          : Navigator.pushNamed(context, '/CreMyRm');
+                        });
                       },
                       padding: EdgeInsets.all(0.0),
                     ),
@@ -141,7 +152,7 @@ class Top extends StatelessWidget {
                 ),
                 margin: EdgeInsets.all(10.0),
                 padding: EdgeInsets.all(2.0),
-                width: this.size.width - 20,
+                width: this._size.width - 20,
                 decoration: BoxDecoration(
                   color: Color(0xffad0000).withOpacity(0.9),
                 ),

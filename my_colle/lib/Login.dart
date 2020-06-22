@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:my_colle/Auth.dart';
+import 'package:my_colle/Style.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -27,63 +28,88 @@ class _LoginState extends State<Login> {
       appBar: AppBar(),
       body: Stack(
         children: <Widget>[
-
-      Column(
-        children: <Widget>[
           Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              decoration: const InputDecoration(
-                labelText: 'E-Mail',
-              ),
-              onChanged: _handleTextEM,
+            constraints: BoxConstraints.expand(),
+            child: Image.asset(
+              'images/background.png',
+              fit: BoxFit.cover,
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              obscureText: !_showPassword,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                suffixIcon: IconButton(
-                  icon: Icon(_showPassword
-                    ? Icons.visibility
-                    : Icons.visibility_off 
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'E-Mail',
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _showPassword = !_showPassword;
-                    });
-                  },
-                )
-
+                  onChanged: _handleTextEM,
+                ),
               ),
-              onChanged: _handleTextPW,
-            ),
-          ),
-          RaisedButton(
-            child: Text('Login'),
-            onPressed: () {
-              setState(() {
-                _loading = true;
-              });
-              Auth.handleSignIn(_email,_password)
-              .then((_result) {
-                if (_result != null) {
-                  Auth.authResult = _result;
-                  Navigator.pushReplacementNamed(context, '/Top');
-                } else {
-                  setState(() {
-                    _loading = false;
-                  });
-                  _buildDialog(context);
-                }
-              });
-            },
-          ),
-        ],
-      ),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  obscureText: !_showPassword,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(_showPassword
+                        ? Icons.visibility
+                        : Icons.visibility_off 
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showPassword = !_showPassword;
+                        });
+                      },
+                    )
 
+                  ),
+                  onChanged: _handleTextPW,
+                ),
+              ),
+              FlatButton(
+                child: Container(
+                  width: 120.0,
+                  child: Center(
+                    child: Text(
+                      ' ログイン',
+                      style: TextStyle(
+                        color: Color(0xffFFFFFF),
+                        fontSize: 20.0,
+                        fontFamily: Style.font,
+                        locale: Locale("ja", "JP"),
+                      ),
+                    ),
+                  ), 
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xffFFFFFF)),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(0xffad0000).withOpacity(0.9),
+                  ),
+                  padding: EdgeInsets.all(10.0),
+                ),
+                onPressed: () {
+                  setState(() {
+                    _loading = true;
+                  });
+                  Auth.handleSignIn(_email,_password)
+                  .then((_result) {
+                    if (_result != null) {
+                      Auth.authResult = _result;
+                      Navigator.pushReplacementNamed(context, '/Top');
+                    } else {
+                      setState(() {
+                        _loading = false;
+                      });
+                      _buildDialog(context);
+                    }
+                  });
+                },
+              ),
+
+            ],
+          ),
           _loading
           ? BackdropFilter(
             filter: ImageFilter.blur(

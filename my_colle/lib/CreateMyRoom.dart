@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
 import 'package:my_colle/Style.dart';
 import 'package:my_colle/Data.dart';
+import 'package:my_colle/Auth.dart';
 
 class CreateMyRoom extends StatefulWidget {
   @override
@@ -10,13 +14,21 @@ class CreateMyRoom extends StatefulWidget {
 }
 
 class _CreateMyRoomState extends State<CreateMyRoom> {
-  String titleText;
-  File imageFile;
-  String categoryVal = Data.categoryList[0];
+  String _category = Data.categoryList[0];
+  String _title;
+  String _body;
+  String _imageURL;
+  File _imageFile;
 
-  void setTitleText(String str) {
+  void _setTitle(String str) {
     setState(() {
-      titleText = str;
+      _title = str;
+    });
+  }
+
+  void _setBody(String str) {
+    setState(() {
+      _body = str;
     });
   }
 
@@ -26,8 +38,17 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
       return;
     }
     setState(() {
-      this.imageFile = imageFile;
+      this._imageFile = imageFile;
     });
+  }
+
+  Future<String> uploadMyRoomImage() async {
+    StorageReference storageReference = FirebaseStorage.instance
+      .ref()
+      .child('myroom/${Auth.authResult.user.uid}${Path.extension(_imageFile.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_imageFile);
+    await uploadTask.onComplete;
+    return await storageReference.getDownloadURL();
   }
 
   @override
@@ -56,10 +77,10 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: DropdownButton<String>(
-                  value: categoryVal,
+                  value: _category,
                   onChanged: (String newValue) {
                     setState(() {
-                      categoryVal = newValue;
+                      _category = newValue;
                     });
                   },
                   items: Data.categoryList.map<DropdownMenuItem<String>>(
@@ -82,10 +103,8 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: 1,
-                  onChanged: setTitleText,
-                  onSubmitted: setTitleText,
+                  onChanged: _setTitle,
                 ),
               ),
               Text(
@@ -98,8 +117,8 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: null,
+                  onChanged: _setBody,
                 ),
               ),
               Row(
@@ -130,9 +149,10 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   ),
                 ],
               ),
-              (imageFile == null)
+              (_imageFile == null)
               ? SizedBox(height: 200.0)
-              : Image.file(imageFile,
+              : Image.file(
+                _imageFile,
                 height: 200.0,
                 width: 200.0,
               ),
@@ -157,11 +177,21 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   ),
                   padding: EdgeInsets.all(10.0),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
+                onPressed: () async {
+                  _imageURL = await uploadMyRoomImage();
+                  await Firestore.instance.collection('myroom')
+                  .document(Auth.authResult.user.uid)
+                  .setData({
+                    'category': _category,
+                    'title': _title,
+                    'body': _body,
+                    'imageURL': _imageURL,
+                    'user': Auth.authResult.user.uid,
+                  });
+                  Navigator.popAndPushNamed(
                     context,
                     '/MyRmTop',
-                    arguments: titleText,
+                    arguments: _title,
                   );
                 },
                 padding: EdgeInsets.all(0.0),
