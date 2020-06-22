@@ -1,14 +1,12 @@
 class UserVoice {
-  int userNo;
+  String userId;
   String userName;
-  int collectionNo;
   String comment;
   String postTime;
   
-  UserVoice(int userNo, String userName, int collectionNo, String comment, String postTime) {
-    this.userNo = userNo;
+  UserVoice(String userId, String userName, String comment, String postTime) {
+    this.userId = userId;
     this.userName = userName;
-    this.collectionNo = collectionNo;
     this.comment = comment;
     this.postTime = postTime;
   }

@@ -6,9 +6,9 @@ import 'package:my_colle/Style.dart';
 class UserVoiceList extends StatelessWidget {
   
   Size size;
-  int collectionNo;
+  String itemId;
   
-  UserVoiceList({Key key, this.collectionNo}): super(key: key);
+  UserVoiceList({Key key, this.itemId}): super(key: key);
   
   @override
   Widget build([BuildContext context]) {
@@ -18,7 +18,7 @@ class UserVoiceList extends StatelessWidget {
     
     // userVoiceのリストを取得(今は固定)
     UserVoiceDao dao = new UserVoiceDao();
-    List<UserVoice> userVoiceList = dao.getUserVoiceListByCollectionNo(this.collectionNo); // ユーザーNoはなんとなく
+    List<UserVoice> userVoiceList = dao.getUserVoiceListByItemId(this.itemId); // ユーザーNoはなんとなく
     
     // リスト表示用のWidgetリスト作成
     List<Widget> userVoiceWidgetList = <Widget>[];
@@ -73,7 +73,7 @@ class UserVoiceList extends StatelessWidget {
               Container(
                 child: Text(userVoice.postTime, style: TextStyle(color: Color(0xffbbbbbb))),
               ),
-              createReplyButton(userVoice.userNo),
+              createReplyButton(userVoice.userId),
             ],
           ),
         ],
@@ -83,7 +83,7 @@ class UserVoiceList extends StatelessWidget {
   
   /// 返信ボタン作成
   /// (ユーザNoは画面遷移に使うかもだから、一応引数)
-  Widget createReplyButton(int userNo) {
+  Widget createReplyButton(String userNo) {
     return FlatButton(
       child: Container(
         width: 60.0,
