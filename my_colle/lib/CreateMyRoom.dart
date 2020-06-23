@@ -42,13 +42,41 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
     });
   }
 
-  Future<String> uploadMyRoomImage() async {
+  Future<String> _uploadMyRoomImage() async {
     StorageReference storageReference = FirebaseStorage.instance
       .ref()
       .child('myroom/${Auth.authResult.user.uid}${Path.extension(_imageFile.path)}');
     StorageUploadTask uploadTask = storageReference.putFile(_imageFile);
     await uploadTask.onComplete;
     return await storageReference.getDownloadURL();
+  }
+
+  bool _isNull() {
+    if (_title == null || _title.isEmpty ||
+        _body == null || _body.isEmpty ||
+        _imageFile == null) {
+      return true;
+    }
+    return false;
+  }
+
+  _buildDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('未入力の項目があります。'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -178,21 +206,21 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   padding: EdgeInsets.all(10.0),
                 ),
                 onPressed: () async {
-                  _imageURL = await uploadMyRoomImage();
-                  await Firestore.instance.collection('myroom')
-                  .document(Auth.authResult.user.uid)
-                  .setData({
-                    'category': _category,
-                    'title': _title,
-                    'body': _body,
-                    'imageURL': _imageURL,
-                    'user': Auth.authResult.user.uid,
-                  });
-                  Navigator.popAndPushNamed(
-                    context,
-                    '/MyRmTop',
-                    arguments: _title,
-                  );
+                  if (_isNull()) {
+                    _buildDialog(context);
+                  } else {
+                    _imageURL = await _uploadMyRoomImage();
+                    await Firestore.instance.collection('myroom')
+                    .document(Auth.authResult.user.uid)
+                    .setData({
+                      'category': _category,
+                      'title': _title,
+                      'body': _body,
+                      'imageURL': _imageURL,
+                      'user': Auth.authResult.user.uid,
+                    });
+                    Navigator.popAndPushNamed(context, '/MyRmTop', arguments: _title,);
+                  }
                 },
                 padding: EdgeInsets.all(0.0),
               ),
