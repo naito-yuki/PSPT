@@ -27,7 +27,7 @@ class CollectionList extends StatelessWidget {
     
     MyRoom myRoom = ModalRoute.of(context).settings.arguments;
     String myroomId = myRoom.documentId;
-    String roomUserId = myRoom.user;
+    String roomUserId = myRoom.userId;
 
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('myroom')
