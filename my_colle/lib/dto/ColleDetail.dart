@@ -2,10 +2,10 @@ import 'package:my_colle/dto/Collection.dart';
 
 class ColleDetail {
   Collection collection;
-  String collectionId;
+  String myroomId;
   
-  ColleDetail(Collection collection, String collectionId) {
+  ColleDetail(Collection collection, String myroomId) {
     this.collection = collection;
-    this.collectionId = collectionId;
+    this.myroomId = myroomId;
   }
 }
