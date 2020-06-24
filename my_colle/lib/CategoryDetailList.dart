@@ -84,7 +84,6 @@ class _CategoryDetailListState extends StatelessWidget {
             return new ListView(
               children:
                   snapshot.data.documents.map((DocumentSnapshot document) {
-                print("URL = " + document["imageURL"]);
                 {
                   if (subcategory != document["subcategory"]) {
                     subcategory = document["subcategory"];
@@ -146,7 +145,12 @@ class _CategoryDetailListState extends StatelessWidget {
                       leading: Icon(Icons.person),
                       onTap: () {
                         Navigator.pushNamed(context, '/MyRmTop',
-                            arguments: document['title']);
+                            arguments: new MyRoom(
+                                document["user"],
+                                "Jack",
+                                document['title'],
+                                document["imageURL"],
+                                document.documentID));
                       },
                     ),
                   ),
