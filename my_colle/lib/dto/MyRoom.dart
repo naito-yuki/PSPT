@@ -5,5 +5,5 @@ class MyRoom {
   String imageUrl;
   String documentId;
 
-  MyRoom(this.userName,this.roomName,this.imageUrl,this.documentId);
+  MyRoom(this.userId, this.userName, this.roomName, this.imageUrl, this.documentId);
 }

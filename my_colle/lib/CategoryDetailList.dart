@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_colle/CreateMyRoom.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
 // void main() => runApp(new MyApp());
 
@@ -67,7 +69,7 @@ class _CategoryDetailListState extends StatelessWidget {
       stream: Firestore.instance
           .collection('myroom')
           .where("category", isEqualTo: categorytitle)
-          // .orderBy("subcategory")
+          .orderBy("subcategory")
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) return new Text('Error:');
@@ -75,14 +77,14 @@ class _CategoryDetailListState extends StatelessWidget {
           case ConnectionState.waiting:
             return new Text('Loading...');
           default:
-          // {
+            // {
             // var mappedFruits=snapshot.data.documents.map((DocumentSnapshot document) => document["category"]).toList();
             // print(mappedFruits);
-          // }
+            // }
             return new ListView(
               children:
                   snapshot.data.documents.map((DocumentSnapshot document) {
-                // print(document.documentID);
+                print("URL = " + document["imageURL"]);
                 {
                   if (subcategory != document["subcategory"]) {
                     subcategory = document["subcategory"];
@@ -116,7 +118,12 @@ class _CategoryDetailListState extends StatelessWidget {
                               leading: Icon(Icons.person),
                               onTap: () {
                                 Navigator.pushNamed(context, '/MyRmTop',
-                                    arguments: document['title']);
+                                    arguments: new MyRoom(
+                                        document["user"],
+                                        "Jack",
+                                        document['title'],
+                                        document["imageURL"],
+                                        document.documentID));
                               },
                             ),
                           ),
@@ -144,7 +151,7 @@ class _CategoryDetailListState extends StatelessWidget {
                     ),
                   ),
                 );
-              }).toList()..sort(),
+              }).toList(),
             );
         }
       },
