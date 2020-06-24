@@ -38,6 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
                ? Text(_image.path)
                : Text('null'),
            Text('Selected Image'),    
+           _uploadedFileURL != null
+               ? Text(_uploadedFileURL)
+               : Text('null'),
+           Text('↑-----downloadURL-----↑'),    
            _image != null    
                ? Image.asset(    
                    _image.path,    

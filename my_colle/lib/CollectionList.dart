@@ -1,70 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:my_colle/dto/Collection.dart';
-import 'package:my_colle/dao/CollectionDao.dart';
 import 'package:my_colle/Style.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_colle/dto/ColleDetail.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
 class CollectionList extends StatelessWidget {
-  
+
+//NAITO START
+  String myRoomId;
+//NAITO END
+
   Size size;
-  int userNo;
+  String userId;
   BuildContext context;
-  
-  CollectionList({Key key, this.userNo}): super(key: key);
+  List<Collection> collectionList = new List<Collection>();
+
+ CollectionList({Key key, this.userId}): super(key: key);
   
   @override
   Widget build([BuildContext context]) {
-    
-    // 画面サイズ
+
+    //画面サイズ
     this.size = MediaQuery.of(context).size;
     this.context = context;
     
-    // collectionのリストを取得(今は固定)
-    CollectionDao dao = new CollectionDao();
-    List<Collection> collectionList = dao.getCollectionListByUserNo(this.userNo); // ユーザーNoはなんとなく
-    
-    // リスト表示用のWidgetリスト作成
-    List<Widget> collectionWidgetList = <Widget>[];
-    collectionList.forEach((Collection collection) {
-      collectionWidgetList.add(createCollectionWidget(collection));
-    });
-    
-    // 自分のcollection一覧の場合、追加ボタンを表示
-    Widget plusButton;
-    if(this.userNo == 1) {
-      plusButton = FlatButton(
-        child: Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            border: Border.all(color: Color(0xffFFFFFF)),
-            borderRadius: BorderRadius.circular(10),
-            color: Color(0xffd96666).withOpacity(0.75),
-          ),
-          child: Center(child:Text("+", style: Style.plusButtonText)), 
-        ),
-        padding: EdgeInsets.all(0.0),
-        onPressed: () {
-          Navigator.pushNamed(context,'/CollePst',);
-        },
+    MyRoom myRoom = ModalRoute.of(context).settings.arguments;
+    String myroomId = myRoom.documentId;
+    String roomUserId = myRoom.user;
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('myroom')
+      .document(myroomId)
+      .collection('items').snapshots(),
+    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (snapshot.hasError)
+          return new Text('Error: ${snapshot.error}');
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting: return new Text('Loading...');
+          default:
+            Widget plusButton;
+            if(this.userId == roomUserId) {
+              plusButton = FlatButton(
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xffFFFFFF)),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Color(0xffd96666).withOpacity(0.75),
+                  ),
+                  child: Center(child:Text("+", style: Style.plusButtonText)), 
+                ),
+                padding: EdgeInsets.all(0.0),
+                onPressed: () {
+                  Navigator.pushNamed(context,'/CollePst',);
+                },
+              );
+            }
+
+            return Scaffold(
+              appBar: AppBar(),
+              body: Container(
+                decoration: new BoxDecoration(
+                  image: new DecorationImage(
+                    image: AssetImage('images/background.png'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: ListView(children: snapshot.data.documents.map((DocumentSnapshot doc) {
+                  return createCollectionWidget(new Collection(doc.documentID, doc["imageURL"], doc["title"], doc["body"]), myroomId);
+              }).toList(),
+              ),
+              ),
+              floatingActionButton: plusButton,
+            );
+          }
+        }
       );
     }
     
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        decoration: new BoxDecoration(
-          image: new DecorationImage(
-            image: AssetImage('images/background.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: ListView(children: collectionWidgetList),
-      ),
-      floatingActionButton: plusButton,
-    );
-  }
-  
-  Widget createCollectionWidget(Collection collection) {
+  Widget createCollectionWidget(Collection collection, String myroomId) {
     return FlatButton(
       child: Container(
         width: this.size.width,
@@ -80,7 +96,7 @@ class CollectionList extends StatelessWidget {
                     shape: BoxShape.rectangle,
                     image: DecorationImage(
                       fit: BoxFit.fill,
-                      image: AssetImage(collection.imageUrl)
+                      image: NetworkImage(collection.imageUrl),
                     )
                   ),
                 ),
@@ -113,7 +129,7 @@ class CollectionList extends StatelessWidget {
           Navigator.pushNamed(
             this.context, 
             '/ColleDtl',
-            arguments: collection
+            arguments: new ColleDetail(collection, myroomId)
           );
       },
     );
