@@ -1,13 +1,11 @@
 class Collection {
-  int collectionNo;
-  int userNo;
+  String collectionId;
   String imageUrl;
   String collectionName;
   String description;
   
-  Collection(int collectionNo, int userNo, String imageUrl, String collectionName, String description) {
-    this.collectionNo = collectionNo;
-    this.userNo = userNo;
+  Collection(String collectionId, String imageUrl, String collectionName, String description) {
+    this.collectionId = collectionId;
     this.imageUrl = imageUrl;
     this.collectionName = collectionName;
     this.description = description;

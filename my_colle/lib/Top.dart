@@ -1,14 +1,23 @@
+import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_colle/Style.dart';
+import 'package:my_colle/Auth.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
-class Top extends StatelessWidget {
+class Top extends StatefulWidget {
+  @override
+  _TopState createState() => _TopState();
+}
 
-  Size size;
+class _TopState extends State<Top> {
+  Size _size;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
-    this.size = MediaQuery.of(context).size;
-    
+    this._size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(),
       endDrawer: Drawer(),
@@ -24,7 +33,7 @@ class Top extends StatelessWidget {
           Column(            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Style.height(this.size.height/6.8),
+              Style.height(this._size.height/6.8),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -77,9 +86,9 @@ class Top extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Color(0xffad0000).withOpacity(0.9),
                 ),
-                width: this.size.width - 20,
+                width: this._size.width - 20,
               ),
-              Style.height(this.size.height/3.4),
+              Style.height(this._size.height/3.4),
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -133,7 +142,35 @@ class Top extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                       ),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/CreMyRm');
+                        setState(() {
+                          _loading = true;
+                        });
+                        Firestore.instance.collection('myroom')
+                        .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
+                        .then((value) {
+                          if (value.documents.isNotEmpty) {
+                            setState(() {
+                              _loading = false;
+                            });
+                            MyRoom myRoom = MyRoom(
+                              value.documents[0].data['user'],
+                              'テストユーザ',
+                              value.documents[0].data['title'],
+                              value.documents[0].data['imageURL'],
+                              value.documents[0].documentID
+                            );
+                            Navigator.pushNamed(
+                              context,
+                              '/MyRmTop',
+                              arguments: myRoom,
+                            );
+                          } else {
+                            setState(() {
+                              _loading = false;
+                            });
+                            Navigator.pushNamed(context, '/CreMyRm');
+                          }
+                        });
                       },
                       padding: EdgeInsets.all(0.0),
                     ),
@@ -141,13 +178,29 @@ class Top extends StatelessWidget {
                 ),
                 margin: EdgeInsets.all(10.0),
                 padding: EdgeInsets.all(2.0),
-                width: this.size.width - 20,
+                width: this._size.width - 20,
                 decoration: BoxDecoration(
                   color: Color(0xffad0000).withOpacity(0.9),
                 ),
               ),
             ],
           ),
+          _loading
+          ? BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 0.1,
+              sigmaY: 0.1,
+            ),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          )
+          : Container(),
+          _loading
+          ? Center(
+            child: CircularProgressIndicator(),
+          )
+          : Container(),
         ],
       ),
     );

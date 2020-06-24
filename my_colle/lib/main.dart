@@ -12,6 +12,8 @@ import 'package:my_colle/CollectionPost.dart';
 import 'package:my_colle/TestDB.dart';
 import 'package:my_colle/TestStorage.dart';
 
+import 'Auth.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/CtgrLst': (context) => CategoryList(),
         '/CtgDtlLst': (context) => CategoryDetailList(),
         '/MyRmTop': (context) => MyRoomTop(),
-        '/ColleLst':(context) => CollectionList(userNo: 1,),
+        '/ColleLst':(context) => CollectionList(),
         '/ColleDtl': (context) => CollectionDetail(),
         '/UsrVcLst': (context) => UserVoiceList(),
         '/CreMyRm': (context) => CreateMyRoom(),

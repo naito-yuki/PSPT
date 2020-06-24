@@ -1,8 +1,14 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
 import 'package:my_colle/Style.dart';
-//import 'package:my_colle/Data.dart';
+import 'package:my_colle/Auth.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
 class CollectionPost extends StatefulWidget {
   @override
@@ -10,12 +16,21 @@ class CollectionPost extends StatefulWidget {
 }
 
 class _CollectionPostState extends State<CollectionPost> {
-  String titleText;
-  File imageFile;
+  String _title;
+  String _body;
+  String _imageURL;
+  File _imageFile;
+  bool _loading = false;
 
-  void setTitleText(String str) {
+  void _setTitle(String str) {
     setState(() {
-      titleText = str;
+      _title = str;
+    });
+  }
+
+  void _setBody(String str) {
+    setState(() {
+      _body = str;
     });
   }
 
@@ -25,13 +40,53 @@ class _CollectionPostState extends State<CollectionPost> {
       return;
     }
     setState(() {
-      this.imageFile = imageFile;
+      this._imageFile = imageFile;
     });
+  }
+
+  Future<String> _uploadMyRoomImage() async {
+    String strDateTime = DateFormat('yyyyMMddHHmmss').format(DateTime.now());
+    StorageReference storageReference = FirebaseStorage.instance
+      .ref()
+      .child('items/${Auth.authResult.user.uid}/$strDateTime${Path.extension(_imageFile.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_imageFile);
+    await uploadTask.onComplete;
+    return await storageReference.getDownloadURL();
+  }
+
+  bool _isNull() {
+    if (_title == null || _title.isEmpty ||
+        _body == null || _body.isEmpty ||
+        _imageFile == null) {
+      return true;
+    }
+    return false;
+  }
+
+  _buildDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('未入力の項目があります。'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    MyRoom _myRoom = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(),
       body: Stack(
         children: <Widget>[
@@ -55,10 +110,8 @@ class _CollectionPostState extends State<CollectionPost> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: 1,
-                  onChanged: setTitleText,
-                  onSubmitted: setTitleText,
+                  onChanged: _setTitle,
                 ),
               ),
               Text(
@@ -71,8 +124,8 @@ class _CollectionPostState extends State<CollectionPost> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: null,
+                  onChanged: _setBody,
                 ),
               ),
               Row(
@@ -103,9 +156,9 @@ class _CollectionPostState extends State<CollectionPost> {
                   ),
                 ],
               ),
-              (imageFile == null)
+              (_imageFile == null)
               ? SizedBox(height: 200.0)
-              : Image.file(imageFile,
+              : Image.file(_imageFile,
                 height: 200.0,
                 width: 200.0,
               ),
@@ -130,13 +183,48 @@ class _CollectionPostState extends State<CollectionPost> {
                   ),
                   padding: EdgeInsets.all(10.0),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context,'/ColleLst',);
+                onPressed: () async {
+                  setState(() {
+                    _loading = true;
+                  });
+                  if (_isNull()) {
+                      setState(() {
+                        _loading = false;
+                      });
+                    _buildDialog(context);
+                  } else {
+                    _imageURL = await _uploadMyRoomImage();
+                    await Firestore.instance.collection('myroom')
+                    .document(_myRoom.documentId)
+                    .collection('items')
+                    .add({
+                      'title': _title,
+                      'body': _body,
+                      'imageURL': _imageURL,
+                    });
+                    Navigator.pop(context);
+                  }
                 },
                 padding: EdgeInsets.all(0.0),
               ),
             ],
           ),
+          _loading
+          ? BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 0.1,
+              sigmaY: 0.1,
+            ),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          )
+          : Container(),
+          _loading
+          ? Center(
+            child: CircularProgressIndicator(),
+          )
+          : Container(),
         ],
       )
     );

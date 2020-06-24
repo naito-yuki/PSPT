@@ -1,8 +1,14 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as Path;
 import 'package:my_colle/Style.dart';
 import 'package:my_colle/Data.dart';
+import 'package:my_colle/Auth.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
 class CreateMyRoom extends StatefulWidget {
   @override
@@ -10,13 +16,22 @@ class CreateMyRoom extends StatefulWidget {
 }
 
 class _CreateMyRoomState extends State<CreateMyRoom> {
-  String titleText;
-  File imageFile;
-  String categoryVal = Data.categoryList[0];
+  String _category = Data.categoryList[0];
+  String _title;
+  String _body;
+  String _imageURL;
+  File _imageFile;
+  bool _loading = false;
 
-  void setTitleText(String str) {
+  void _setTitle(String str) {
     setState(() {
-      titleText = str;
+      _title = str;
+    });
+  }
+
+  void _setBody(String str) {
+    setState(() {
+      _body = str;
     });
   }
 
@@ -26,13 +41,51 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
       return;
     }
     setState(() {
-      this.imageFile = imageFile;
+      this._imageFile = imageFile;
     });
+  }
+
+  Future<String> _uploadMyRoomImage() async {
+    StorageReference storageReference = FirebaseStorage.instance
+      .ref()
+      .child('myroom/${Auth.authResult.user.uid}${Path.extension(_imageFile.path)}');
+    StorageUploadTask uploadTask = storageReference.putFile(_imageFile);
+    await uploadTask.onComplete;
+    return await storageReference.getDownloadURL();
+  }
+
+  bool _isNull() {
+    if (_title == null || _title.isEmpty ||
+        _body == null || _body.isEmpty ||
+        _imageFile == null) {
+      return true;
+    }
+    return false;
+  }
+
+  _buildDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Text('未入力の項目があります。'),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(),
       body: Stack(
         children: <Widget>[
@@ -56,10 +109,10 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: DropdownButton<String>(
-                  value: categoryVal,
+                  value: _category,
                   onChanged: (String newValue) {
                     setState(() {
-                      categoryVal = newValue;
+                      _category = newValue;
                     });
                   },
                   items: Data.categoryList.map<DropdownMenuItem<String>>(
@@ -82,10 +135,8 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: 1,
-                  onChanged: setTitleText,
-                  onSubmitted: setTitleText,
+                  onChanged: _setTitle,
                 ),
               ),
               Text(
@@ -98,8 +149,8 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
               Container(
                 color: Colors.white,
                 child: TextField(
-                  keyboardType: TextInputType.multiline,
                   maxLines: null,
+                  onChanged: _setBody,
                 ),
               ),
               Row(
@@ -130,9 +181,10 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   ),
                 ],
               ),
-              (imageFile == null)
+              (_imageFile == null)
               ? SizedBox(height: 200.0)
-              : Image.file(imageFile,
+              : Image.file(
+                _imageFile,
                 height: 200.0,
                 width: 200.0,
               ),
@@ -157,17 +209,59 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   ),
                   padding: EdgeInsets.all(10.0),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    '/MyRmTop',
-                    arguments: titleText,
-                  );
+                onPressed: () async {
+                  setState(() {
+                    _loading = true;
+                  });
+                  if (_isNull()) {
+                      setState(() {
+                        _loading = false;
+                      });
+                    _buildDialog(context);
+                  } else {
+                    _imageURL = await _uploadMyRoomImage();
+                    await Firestore.instance.collection('myroom')
+                    .add({
+                      'category': _category,
+                      'title': _title,
+                      'body': _body,
+                      'imageURL': _imageURL,
+                      'user': Auth.authResult.user.uid,
+                    });
+                    Firestore.instance.collection('myroom')
+                    .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
+                    .then((value) {
+                      MyRoom myRoom = MyRoom(
+                        value.documents[0].data['user'],
+                        'テストユーザ',
+                        value.documents[0].data['title'],
+                        value.documents[0].data['imageURL'],
+                        value.documents[0].documentID
+                      );
+                      Navigator.popAndPushNamed(context, '/MyRmTop', arguments: myRoom,);
+                    });
+                  }
                 },
                 padding: EdgeInsets.all(0.0),
               ),
             ],
           ),
+          _loading
+          ? BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 0.1,
+              sigmaY: 0.1,
+            ),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          )
+          : Container(),
+          _loading
+          ? Center(
+            child: CircularProgressIndicator(),
+          )
+          : Container(),
         ],
       )
     );
