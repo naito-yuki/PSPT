@@ -62,6 +62,7 @@ class CategoryDetailList extends StatelessWidget {
 
 class _CategoryDetailListState extends StatelessWidget {
   String subcategory = "";
+  var hashMap = new Map();
   @override
   Widget build(BuildContext context) {
     var categorytitle = ModalRoute.of(context).settings.arguments;
@@ -77,10 +78,22 @@ class _CategoryDetailListState extends StatelessWidget {
           case ConnectionState.waiting:
             return new Text('Loading...');
           default:
-            // {
-            // var mappedFruits=snapshot.data.documents.map((DocumentSnapshot document) => document["category"]).toList();
-            // print(mappedFruits);
-            // }
+            {
+              var list = snapshot.data.documents
+                  .map((DocumentSnapshot document) => document["subcategory"])
+                  .toList();
+              int i = 0;
+              list.forEach((element) {
+                if (subcategory != element) i = 0;
+                i++;
+                hashMap.update(
+                  element,
+                  (existingValue) => i,
+                  ifAbsent: () => i,
+                );
+                subcategory = element;
+              });
+            }
             return new ListView(
               children:
                   snapshot.data.documents.map((DocumentSnapshot document) {
@@ -94,7 +107,7 @@ class _CategoryDetailListState extends StatelessWidget {
                             height: 35,
                             child: ListTile(
                               title: new Text(
-                                  "　${document['subcategory']}・・・・・${snapshot.data.documents.length}",
+                                  "　${document['subcategory']}・・・・・${hashMap[document['subcategory']].toString()}",
                                   style: TextStyle(
                                     fontSize: 16,
                                   )),
