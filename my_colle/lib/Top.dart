@@ -153,12 +153,12 @@ class _TopState extends State<Top> {
                               _loading = false;
                             });
                             MyRoom myRoom = MyRoom(
+                              value.documents[0].data['user'],
                               'テストユーザ',
                               value.documents[0].data['title'],
                               value.documents[0].data['imageURL'],
                               value.documents[0].documentID
                             );
-                            myRoom.userId = value.documents[0].data['user'];
                             Navigator.pushNamed(
                               context,
                               '/MyRmTop',

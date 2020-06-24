@@ -232,12 +232,12 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                     .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
                     .then((value) {
                       MyRoom myRoom = MyRoom(
+                        value.documents[0].data['user'],
                         'テストユーザ',
                         value.documents[0].data['title'],
                         value.documents[0].data['imageURL'],
                         value.documents[0].documentID
                       );
-                      myRoom.userId = value.documents[0].data['user'];
                       Navigator.popAndPushNamed(context, '/MyRmTop', arguments: myRoom,);
                     });
                   }

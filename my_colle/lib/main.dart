@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/CtgrLst': (context) => CategoryList(),
         '/CtgDtlLst': (context) => CategoryDetailList(),
         '/MyRmTop': (context) => MyRoomTop(),
-        '/ColleLst':(context) => CollectionList(userId: Auth.authResult.user.uid,),
+        '/ColleLst':(context) => CollectionList(),
         '/ColleDtl': (context) => CollectionDetail(),
         '/UsrVcLst': (context) => UserVoiceList(),
         '/CreMyRm': (context) => CreateMyRoom(),

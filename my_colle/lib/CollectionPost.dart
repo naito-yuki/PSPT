@@ -1,12 +1,14 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as Path;
 import 'package:my_colle/Style.dart';
 import 'package:my_colle/Auth.dart';
-import 'package:intl/intl.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
 class CollectionPost extends StatefulWidget {
   @override
@@ -18,6 +20,7 @@ class _CollectionPostState extends State<CollectionPost> {
   String _body;
   String _imageURL;
   File _imageFile;
+  bool _loading = false;
 
   void _setTitle(String str) {
     setState(() {
@@ -81,7 +84,9 @@ class _CollectionPostState extends State<CollectionPost> {
 
   @override
   Widget build(BuildContext context) {
+    MyRoom _myRoom = ModalRoute.of(context).settings.arguments;
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(),
       body: Stack(
         children: <Widget>[
@@ -179,25 +184,47 @@ class _CollectionPostState extends State<CollectionPost> {
                   padding: EdgeInsets.all(10.0),
                 ),
                 onPressed: () async {
+                  setState(() {
+                    _loading = true;
+                  });
                   if (_isNull()) {
+                      setState(() {
+                        _loading = false;
+                      });
                     _buildDialog(context);
                   } else {
                     _imageURL = await _uploadMyRoomImage();
                     await Firestore.instance.collection('myroom')
-                    .document(Auth.authResult.user.uid)
+                    .document(_myRoom.documentId)
                     .collection('items')
                     .add({
                       'title': _title,
                       'body': _body,
                       'imageURL': _imageURL,
                     });
-                    Navigator.popAndPushNamed(context,'/ColleLst',);
+                    Navigator.pop(context);
                   }
                 },
                 padding: EdgeInsets.all(0.0),
               ),
             ],
           ),
+          _loading
+          ? BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 0.1,
+              sigmaY: 0.1,
+            ),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          )
+          : Container(),
+          _loading
+          ? Center(
+            child: CircularProgressIndicator(),
+          )
+          : Container(),
         ],
       )
     );

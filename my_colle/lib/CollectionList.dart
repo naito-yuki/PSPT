@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:my_colle/dto/Collection.dart';
 import 'package:my_colle/Style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_colle/Auth.dart';
 import 'package:my_colle/dto/ColleDetail.dart';
 import 'package:my_colle/dto/MyRoom.dart';
 
 class CollectionList extends StatelessWidget {
 
-//NAITO START
   String myRoomId;
-//NAITO END
 
   Size size;
   String userId;
@@ -27,20 +26,19 @@ class CollectionList extends StatelessWidget {
     
     MyRoom myRoom = ModalRoute.of(context).settings.arguments;
     String myroomId = myRoom.documentId;
-    String roomUserId = myRoom.userId;
 
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('myroom')
-      .document(myroomId)
-      .collection('items').snapshots(),
-    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        .document(myroomId)
+        .collection('items').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError)
           return new Text('Error: ${snapshot.error}');
         switch (snapshot.connectionState) {
           case ConnectionState.waiting: return new Text('Loading...');
           default:
             Widget plusButton;
-            if(this.userId == roomUserId) {
+            if(Auth.authResult.user.uid == myRoom.userId) {
               plusButton = FlatButton(
                 child: Container(
                   width: 80,
@@ -54,7 +52,11 @@ class CollectionList extends StatelessWidget {
                 ),
                 padding: EdgeInsets.all(0.0),
                 onPressed: () {
-                  Navigator.pushNamed(context,'/CollePst',);
+                  Navigator.pushNamed(
+                    context,
+                    '/CollePst',
+                    arguments: myRoom,
+                  );
                 },
               );
             }
