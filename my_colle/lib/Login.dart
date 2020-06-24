@@ -44,6 +44,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: AppBar(),
       body: Stack(
         children: <Widget>[
@@ -81,8 +82,7 @@ class _LoginState extends State<Login> {
                           _showPassword = !_showPassword;
                         });
                       },
-                    )
-
+                    ),
                   ),
                   onChanged: _handleTextPW,
                 ),
@@ -126,7 +126,6 @@ class _LoginState extends State<Login> {
                   });
                 },
               ),
-
             ],
           ),
           _loading

@@ -1,10 +1,18 @@
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:my_colle/Style.dart';
 import 'package:my_colle/Auth.dart';
+import 'package:my_colle/dto/MyRoom.dart';
 
-class Top extends StatelessWidget {
+class Top extends StatefulWidget {
+  @override
+  _TopState createState() => _TopState();
+}
+
+class _TopState extends State<Top> {
   Size _size;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -134,16 +142,34 @@ class Top extends StatelessWidget {
                         padding: EdgeInsets.all(10.0),
                       ),
                       onPressed: () {
+                        setState(() {
+                          _loading = true;
+                        });
                         Firestore.instance.collection('myroom')
                         .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
                         .then((value) {
-                          value.documents.isNotEmpty
-                          ? Navigator.pushNamed(
-                            context,
-                            '/MyRmTop',
-                            arguments: Auth.authResult.user.uid,
-                          )
-                          : Navigator.pushNamed(context, '/CreMyRm');
+                          if (value.documents.isNotEmpty) {
+                            setState(() {
+                              _loading = false;
+                            });
+                            MyRoom myRoom = MyRoom(
+                              'テストユーザ',
+                              value.documents[0].data['title'],
+                              value.documents[0].data['imageURL'],
+                              value.documents[0].documentID
+                            );
+                            myRoom.userId = value.documents[0].data['user'];
+                            Navigator.pushNamed(
+                              context,
+                              '/MyRmTop',
+                              arguments: myRoom,
+                            );
+                          } else {
+                            setState(() {
+                              _loading = false;
+                            });
+                            Navigator.pushNamed(context, '/CreMyRm');
+                          }
                         });
                       },
                       padding: EdgeInsets.all(0.0),
@@ -159,6 +185,22 @@ class Top extends StatelessWidget {
               ),
             ],
           ),
+          _loading
+          ? BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 0.1,
+              sigmaY: 0.1,
+            ),
+            child: Container(
+              color: Colors.black.withOpacity(0.5),
+            ),
+          )
+          : Container(),
+          _loading
+          ? Center(
+            child: CircularProgressIndicator(),
+          )
+          : Container(),
         ],
       ),
     );
