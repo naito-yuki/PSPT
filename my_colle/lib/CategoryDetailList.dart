@@ -61,7 +61,7 @@ class CategoryDetailList extends StatelessWidget {
 }
 
 class _CategoryDetailListState extends StatelessWidget {
-  String subcategory = "";
+  // String subcategory = "";
   var hashMap = new Map();
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class _CategoryDetailListState extends StatelessWidget {
       stream: Firestore.instance
           .collection('myroom')
           .where("category", isEqualTo: categorytitle)
-          .orderBy("subcategory")
+          // .orderBy("subcategory")
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) return new Text('Error:');
@@ -78,72 +78,72 @@ class _CategoryDetailListState extends StatelessWidget {
           case ConnectionState.waiting:
             return new Text('Loading...');
           default:
-            {
-              var list = snapshot.data.documents
-                  .map((DocumentSnapshot document) => document["subcategory"])
-                  .toList();
-              int i = 0;
-              list.forEach((element) {
-                if (subcategory != element) i = 0;
-                i++;
-                hashMap.update(
-                  element,
-                  (existingValue) => i,
-                  ifAbsent: () => i,
-                );
-                subcategory = element;
-              });
-            }
+            // {
+            //   var list = snapshot.data.documents
+            //       .map((DocumentSnapshot document) => document["subcategory"])
+            //       .toList();
+            //   int i = 0;
+            //   list.forEach((element) {
+            //     if (subcategory != element) i = 0;
+            //     i++;
+            //     hashMap.update(
+            //       element,
+            //       (existingValue) => i,
+            //       ifAbsent: () => i,
+            //     );
+            //     subcategory = element;
+            //   });
+            // }
             return new ListView(
               children:
                   snapshot.data.documents.map((DocumentSnapshot document) {
-                {
-                  if (subcategory != document["subcategory"]) {
-                    subcategory = document["subcategory"];
-                    return InkWell(
-                        child: Column(
-                      children: <Widget>[
-                        Container(
-                            height: 35,
-                            child: ListTile(
-                              title: new Text(
-                                  "　${document['subcategory']}・・・・・${hashMap[document['subcategory']].toString()}",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  )),
-                              dense: true,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.0),
-                            )),
-                        Container(
-                          child: Card(
-                            child: ListTile(
-                              title: new Text(
-                                document['title'],
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: new Text(document['body']),
-                              leading: Icon(Icons.person),
-                              onTap: () {
-                                Navigator.pushNamed(context, '/MyRmTop',
-                                    arguments: new MyRoom(
-                                        document["user"],
-                                        "Jack",
-                                        document['title'],
-                                        document["imageURL"],
-                                        document.documentID));
-                              },
-                            ),
-                          ),
-                        )
-                      ],
-                    ));
-                  }
-                }
+                // {
+                //   if (subcategory != document["subcategory"]) {
+                //     subcategory = document["subcategory"];
+                //     return InkWell(
+                //         child: Column(
+                //       children: <Widget>[
+                //         Container(
+                //             height: 35,
+                //             child: ListTile(
+                //               title: new Text(
+                //                   "　${document['subcategory']}・・・・・${hashMap[document['subcategory']].toString()}",
+                //                   style: TextStyle(
+                //                     fontSize: 16,
+                //                   )),
+                //               dense: true,
+                //             ),
+                //             decoration: BoxDecoration(
+                //               color: Colors.black.withOpacity(0.0),
+                //             )),
+                //         Container(
+                //           child: Card(
+                //             child: ListTile(
+                //               title: new Text(
+                //                 document['title'],
+                //                 style: TextStyle(
+                //                   color: Colors.red,
+                //                   fontWeight: FontWeight.bold,
+                //                 ),
+                //               ),
+                //               subtitle: new Text(document['body']),
+                //               leading: Icon(Icons.person),
+                //               onTap: () {
+                //                 Navigator.pushNamed(context, '/MyRmTop',
+                //                     arguments: new MyRoom(
+                //                         document["user"],
+                //                         "Jack",
+                //                         document['title'],
+                //                         document["imageURL"],
+                //                         document.documentID));
+                //               },
+                //             ),
+                //           ),
+                //         )
+                //       ],
+                //     ));
+                //   }
+                // }
                 return InkWell(
                   child: Card(
                     child: ListTile(
