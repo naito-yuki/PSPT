@@ -63,11 +63,9 @@ class _UserVoiceListState extends State<UserVoiceList> {
 
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('myroom')
-        // .document('myroom_sample')
-        .document(colleDetail.myroomId) // myroomのIDをitemInfoに受け取れることを想定
+        .document(colleDetail.myroomId)
         .collection('items')
-        // .document('collection_sample')
-        .document(colleDetail.collection.collectionId) // itemのIDをitemInfoに受け取れることを想定
+        .document(colleDetail.collection.collectionId)
         .collection('comments')
         .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
