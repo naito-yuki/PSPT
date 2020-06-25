@@ -6,17 +6,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'dto/ColleDetail.dart';
+
 class UserVoiceList extends StatefulWidget {
   @override
   _UserVoiceListState createState() => _UserVoiceListState();
-
-  String itemId;
-  UserVoiceList({Key key, this.itemId}): super(key: key);
 }
 
 class _UserVoiceListState extends State<UserVoiceList> {
   Size size;
-  String itemId;
 
   @override
   Widget build([BuildContext context]) {
@@ -58,18 +56,18 @@ class _UserVoiceListState extends State<UserVoiceList> {
   }
 
   Widget _UserVoiceList() {
-    var itemInfo = ModalRoute.of(context).settings.arguments;
+    ColleDetail colleDetail = ModalRoute.of(context).settings.arguments;
 
     // 画面サイズ
     this.size = MediaQuery.of(context).size;
 
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('myroom')
-        .document('myroom_sample')
-        // .document(itemInfo.myroomId) // myroomのIDをitemInfoに受け取れることを想定
+        // .document('myroom_sample')
+        .document(colleDetail.myroomId) // myroomのIDをitemInfoに受け取れることを想定
         .collection('items')
-        .document('collection_sample')
-        // .document(itemInfo.itemId)　// itemのIDをitemInfoに受け取れることを想定
+        // .document('collection_sample')
+        .document(colleDetail.collection.collectionId) // itemのIDをitemInfoに受け取れることを想定
         .collection('comments')
         .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
