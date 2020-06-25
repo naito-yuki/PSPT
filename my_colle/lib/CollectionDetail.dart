@@ -111,7 +111,7 @@ class CollectionDetail extends StatelessWidget {
               Navigator.pushNamed(
                 this.context, 
                 '/UsrVcLst',
-                arguments: colleDetail.collection
+                arguments: colleDetail
               );
             },
           ),
