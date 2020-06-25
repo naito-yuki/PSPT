@@ -223,6 +223,7 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                     await Firestore.instance.collection('myroom')
                     .add({
                       'category': _category,
+                      'subcategory': 'test',
                       'title': _title,
                       'body': _body,
                       'imageURL': _imageURL,
