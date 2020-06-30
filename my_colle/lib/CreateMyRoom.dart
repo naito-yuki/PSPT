@@ -165,6 +165,23 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   FlatButton(
                     child: Container(
                       child: Icon(
+                        Icons.add_a_photo,
+                        color: Colors.white,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Color(0xffFFFFFF)),
+                        borderRadius: BorderRadius.circular(10),
+                        color: Color(0xffad0000).withOpacity(0.9),
+                      ),
+                      padding: EdgeInsets.all(5.0),
+                    ),
+                    onPressed: () {
+                      _getImageFromDevice(ImageSource.camera);
+                    },
+                  ),
+                  FlatButton(
+                    child: Container(
+                      child: Icon(
                         Icons.add_photo_alternate,
                         color: Colors.white,
                       ),
