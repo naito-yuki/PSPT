@@ -165,7 +165,7 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   FlatButton(
                     child: Container(
                       child: Icon(
-                        Icons.add_a_photo,
+                        Icons.photo_camera,
                         color: Colors.white,
                       ),
                       decoration: BoxDecoration(
@@ -182,7 +182,7 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                   FlatButton(
                     child: Container(
                       child: Icon(
-                        Icons.add_photo_alternate,
+                        Icons.photo,
                         color: Colors.white,
                       ),
                       decoration: BoxDecoration(

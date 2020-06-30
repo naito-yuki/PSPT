@@ -140,7 +140,7 @@ class _CollectionPostState extends State<CollectionPost> {
                   FlatButton(
                     child: Container(
                       child: Icon(
-                        Icons.add_a_photo,
+                        Icons.photo_camera,
                         color: Colors.white,
                       ),
                       decoration: BoxDecoration(
@@ -157,7 +157,7 @@ class _CollectionPostState extends State<CollectionPost> {
                   FlatButton(
                     child: Container(
                       child: Icon(
-                        Icons.add_photo_alternate,
+                        Icons.photo,
                         color: Colors.white,
                       ),
                       decoration: BoxDecoration(
