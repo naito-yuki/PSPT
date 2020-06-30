@@ -246,18 +246,34 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                       'imageURL': _imageURL,
                       'user': Auth.authResult.user.uid,
                     });
-                    Firestore.instance.collection('myroom')
-                    .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
-                    .then((value) {
-                      MyRoom myRoom = MyRoom(
-                        value.documents[0].data['user'],
-                        'テストユーザ',
-                        value.documents[0].data['title'],
-                        value.documents[0].data['imageURL'],
-                        value.documents[0].documentID
-                      );
-                      Navigator.popAndPushNamed(context, '/MyRmTop', arguments: myRoom,);
-                    });
+                    QuerySnapshot myroomDoc = await Firestore.instance.collection('myroom')
+                    .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments();
+                    DocumentSnapshot userDoc = await Firestore.instance.collection('user')
+                    .document(myroomDoc.documents[0].data['user']).get();
+                    MyRoom myRoom = MyRoom(
+                      myroomDoc.documents[0].data['user'],
+                      userDoc.data['name'],
+                      myroomDoc.documents[0].data['title'],
+                      myroomDoc.documents[0].data['imageURL'],
+                      myroomDoc.documents[0].documentID
+                    );
+                    Navigator.pushNamed(
+                      context,
+                      '/MyRmTop',
+                      arguments: myRoom,
+                    );
+                    // Firestore.instance.collection('myroom')
+                    // .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
+                    // .then((value) {
+                    //   MyRoom myRoom = MyRoom(
+                    //     value.documents[0].data['user'],
+                    //     'テストユーザ',
+                    //     value.documents[0].data['title'],
+                    //     value.documents[0].data['imageURL'],
+                    //     value.documents[0].documentID
+                    //   );
+                    //   Navigator.popAndPushNamed(context, '/MyRmTop', arguments: myRoom,);
+                    // });
                   }
                 },
                 padding: EdgeInsets.all(0.0),

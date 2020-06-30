@@ -1,24 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:my_colle/CreateMyRoom.dart';
 import 'package:my_colle/dto/MyRoom.dart';
-
-// void main() => runApp(new MyApp());
-
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return new MaterialApp(
-//       title: 'Flutter Demo',
-//       theme: new ThemeData(
-//         //primarySwatch: Colors.red,
-//         primaryColor: Colors.red[600],
-//       ),
-//       home: new MyHomePage(),
-//     );
-//   }
-// }
 
 class CategoryDetailList extends StatelessWidget {
   @override
@@ -156,15 +138,25 @@ class _CategoryDetailListState extends StatelessWidget {
                       ),
                       subtitle: new Text(document['body']),
                       leading: Icon(Icons.person),
-                      onTap: () {
-                        Navigator.pushNamed(context, '/MyRmTop',
-                            arguments: new MyRoom(
-                                document["user"],
-                                "Jack",
-                                document['title'],
-                                document["imageURL"],
-                                document.documentID));
+                      onTap: () async {
+                        DocumentSnapshot myroomDoc = await Firestore.instance.collection('myroom')
+                        .document(document.documentID).get();;
+                        DocumentSnapshot userDoc = await Firestore.instance.collection('user')
+                        .document(document["user"]).get();
+                        MyRoom myRoom = MyRoom(
+                          document["user"],
+                          userDoc.data['name'],
+                          document['title'],
+                          document["imageURL"],
+                          document.documentID
+                        );
+                        Navigator.pushNamed(
+                          context,
+                          '/MyRmTop',
+                          arguments: myRoom,
+                        );
                       },
+
                     ),
                   ),
                 );

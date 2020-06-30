@@ -141,36 +141,36 @@ class _TopState extends State<Top> {
                         ),
                         padding: EdgeInsets.all(10.0),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         setState(() {
                           _loading = true;
                         });
-                        Firestore.instance.collection('myroom')
-                        .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments()
-                        .then((value) {
-                          if (value.documents.isNotEmpty) {
-                            setState(() {
-                              _loading = false;
-                            });
-                            MyRoom myRoom = MyRoom(
-                              value.documents[0].data['user'],
-                              'テストユーザ',
-                              value.documents[0].data['title'],
-                              value.documents[0].data['imageURL'],
-                              value.documents[0].documentID
-                            );
-                            Navigator.pushNamed(
-                              context,
-                              '/MyRmTop',
-                              arguments: myRoom,
-                            );
-                          } else {
-                            setState(() {
-                              _loading = false;
-                            });
-                            Navigator.pushNamed(context, '/CreMyRm');
-                          }
-                        });
+                        QuerySnapshot myroomDoc = await Firestore.instance.collection('myroom')
+                        .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments();
+                        if (myroomDoc.documents.isNotEmpty) {
+                          setState(() {
+                            _loading = false;
+                          });
+                          DocumentSnapshot userDoc = await Firestore.instance.collection('user')
+                          .document(myroomDoc.documents[0].data['user']).get();
+                          MyRoom myRoom = MyRoom(
+                            myroomDoc.documents[0].data['user'],
+                            userDoc.data['name'],
+                            myroomDoc.documents[0].data['title'],
+                            myroomDoc.documents[0].data['imageURL'],
+                            myroomDoc.documents[0].documentID
+                          );
+                          Navigator.pushNamed(
+                            context,
+                            '/MyRmTop',
+                            arguments: myRoom,
+                          );
+                        } else {
+                          setState(() {
+                            _loading = false;
+                          });
+                          Navigator.pushNamed(context, '/CreMyRm');
+                        }
                       },
                       padding: EdgeInsets.all(0.0),
                     ),
