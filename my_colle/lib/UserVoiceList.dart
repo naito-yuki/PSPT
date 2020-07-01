@@ -100,7 +100,6 @@ class _UserVoiceListState extends State<UserVoiceList> {
 
   Widget _UserVoiceList() {
     
-
     // 画面サイズ
     this.size = MediaQuery.of(context).size;
 
@@ -161,44 +160,50 @@ class _UserVoiceListState extends State<UserVoiceList> {
             ],
           ),
         ),
-        // StreamBuilder<QuerySnapshot>(
-        //   stream: Firestore.instance.collection('myroom')
-        //     .document(this._colleDetail.myroomId)
-        //     .collection('items')
-        //     .document(this._colleDetail.collection.collectionId)
-        //     .collection('comments')
-        //     .document(doc.documentID)
-        //     .collection('comments')
-        //     .orderBy('postDatetime', descending: true)
-        //     .snapshots(),
-        //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        //     if (snapshot.hasError) return Text('Error:');
-        //     switch (snapshot.connectionState) {
-        //       case ConnectionState.waiting:
-        //         return Text('Loading...');
-        //       default:
-        //         return ListView(
-        //           children: snapshot.data.documents.map((doc2) {
-        //             return _createUserVoiceWidget2(doc2);
-        //           }).toList(),
-        //         );
-        //     }
-        //   },
-        // ),
+        StreamBuilder<QuerySnapshot>(
+          stream: Firestore.instance.collection('myroom')
+            .document(this._colleDetail.myroomId)
+            .collection('items')
+            .document(this._colleDetail.collection.collectionId)
+            .collection('comments')
+            .document(doc.documentID)
+            .collection('comments')
+            .orderBy('postDatetime', descending: false)
+            .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error:');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Text('Loading...');
+              default:
+                return 
+                  Container(
+                    // width: this.size.width,
+                    height: snapshot.data.documents.toList().length * 135.0,
+                    // alignment: Alignment.topCenter,
+                    child: ListView(
+                      children: snapshot.data.documents.map((doc2) {
+                        return _createUserVoiceWidget2(doc2, parentDocId: doc.documentID);
+                      }).toList(),
+                    ),
+                  );
+            }
+          },
+        ),
       ],
     );
   }
   
-  /// 返信行追加したかった
+  /// 返信行の作成
   /// 
-  Widget _createUserVoiceWidget2(DocumentSnapshot doc) {
+  Widget _createUserVoiceWidget2(DocumentSnapshot doc,{String parentDocId}) {
     return Column(
+      // mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          // height: 100,
           width: this.size.width - 20,
-          margin: EdgeInsets.only(left: 5.0),
           padding: EdgeInsets.all(10.0),
+          margin: EdgeInsets.only(left: 18.0),
           decoration: BoxDecoration(
             border: Border.all(color: Color(0xff0070c0)),
             color: Colors.white,
@@ -216,7 +221,9 @@ class _UserVoiceListState extends State<UserVoiceList> {
                     // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
                     child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
                   ),
-                  _createReplyButton(doc.documentID),
+                  parentDocId == null 
+                  ? _createReplyButton(doc.documentID)
+                  : _createReplyButton(parentDocId),
                 ],
               ),
             ],
@@ -260,6 +267,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
       child: Container(
         width: 100,
         height: 60,
+        margin: EdgeInsets.all(5.0),
         decoration: BoxDecoration(
           border: Border.all(color: Color(0xffFFFFFF)),
           borderRadius: BorderRadius.circular(10),
@@ -351,20 +359,29 @@ class _UserVoiceListState extends State<UserVoiceList> {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: this.size.width - 150,
-                  margin: EdgeInsets.all(15.0),
-                  child: TextField(
-                    textAlign: TextAlign.left,
-                    maxLines: 3,
-                    maxLength: 50,
-                    onChanged: _setCommenttText,
-                  ),  
+                Expanded(
+                  child: Container(
+                    // width: this.size.width - 150,
+                    height: 100.0,
+                    margin: EdgeInsets.all(5.0),
+                    child: TextField(
+                      textAlign: TextAlign.left,
+                      maxLines: 3,
+                      maxLength: 50,
+                      onChanged: _setCommenttText,
+                    ),  
+                  ),
                 ),
                 (docId == null || docId.isEmpty) ?
                   _createSubmitButton()
                   : _createSubmitButton(docId: docId),
               ],
+            ),
+            Expanded(
+              child: Container(
+                // color: Colors.amber,
+                width: 100,
+              ),
             ),
           ],  
         );        
