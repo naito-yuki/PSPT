@@ -73,9 +73,8 @@ class _LoginState extends State<Login> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
-                      icon: Icon(_showPassword
-                        ? Icons.visibility
-                        : Icons.visibility_off 
+                      icon: Icon(
+                        _showPassword ? Icons.visibility : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
@@ -100,7 +99,7 @@ class _LoginState extends State<Login> {
                         locale: Locale("ja", "JP"),
                       ),
                     ),
-                  ), 
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xffFFFFFF)),
                     borderRadius: BorderRadius.circular(10),
@@ -108,42 +107,39 @@ class _LoginState extends State<Login> {
                   ),
                   padding: EdgeInsets.all(10.0),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   setState(() {
                     _loading = true;
                   });
-                  Auth.handleSignIn(_email,_password)
-                  .then((_result) {
-                    if (_result != null) {
-                      Auth.authResult = _result;
-                      Navigator.pushReplacementNamed(context, '/Top');
-                    } else {
-                      setState(() {
-                        _loading = false;
-                      });
-                      _buildDialog(context);
-                    }
-                  });
+                  Auth.authResult = await Auth.handleSignIn(_email, _password);
+                  if (Auth.authResult != null) {
+                    Navigator.pushReplacementNamed(context, '/Top');
+                  } else {
+                    setState(() {
+                      _loading = false;
+                    });
+                    _buildDialog(context);
+                  }
                 },
               ),
             ],
           ),
           _loading
-          ? BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 0.1,
-              sigmaY: 0.1,
-            ),
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          )
-          : Container(),
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 0.1,
+                    sigmaY: 0.1,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                )
+              : Container(),
           _loading
-          ? Center(
-            child: CircularProgressIndicator(),
-          )
-          : Container(),
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(),
         ],
       ),
     );

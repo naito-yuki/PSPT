@@ -46,17 +46,18 @@ class _CollectionPostState extends State<CollectionPost> {
 
   Future<String> _uploadMyRoomImage() async {
     String strDateTime = DateFormat('yyyyMMddHHmmss').format(DateTime.now());
-    StorageReference storageReference = FirebaseStorage.instance
-      .ref()
-      .child('items/${Auth.authResult.user.uid}/$strDateTime${Path.extension(_imageFile.path)}');
+    StorageReference storageReference = FirebaseStorage.instance.ref().child(
+        'items/${Auth.authResult.user.uid}/$strDateTime${Path.extension(_imageFile.path)}');
     StorageUploadTask uploadTask = storageReference.putFile(_imageFile);
     await uploadTask.onComplete;
     return await storageReference.getDownloadURL();
   }
 
   bool _isNull() {
-    if (_title == null || _title.isEmpty ||
-        _body == null || _body.isEmpty ||
+    if (_title == null ||
+        _title.isEmpty ||
+        _body == null ||
+        _body.isEmpty ||
         _imageFile == null) {
       return true;
     }
@@ -174,11 +175,12 @@ class _CollectionPostState extends State<CollectionPost> {
                 ],
               ),
               (_imageFile == null)
-              ? SizedBox(height: 200.0)
-              : Image.file(_imageFile,
-                height: 200.0,
-                width: 200.0,
-              ),
+                  ? SizedBox(height: 200.0)
+                  : Image.file(
+                      _imageFile,
+                      height: 200.0,
+                      width: 200.0,
+                    ),
               FlatButton(
                 child: Container(
                   width: 100.0,
@@ -192,7 +194,7 @@ class _CollectionPostState extends State<CollectionPost> {
                         locale: Locale("ja", "JP"),
                       ),
                     ),
-                  ), 
+                  ),
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xffFFFFFF)),
                     borderRadius: BorderRadius.circular(10),
@@ -205,16 +207,17 @@ class _CollectionPostState extends State<CollectionPost> {
                     _loading = true;
                   });
                   if (_isNull()) {
-                      setState(() {
-                        _loading = false;
-                      });
+                    setState(() {
+                      _loading = false;
+                    });
                     _buildDialog(context);
                   } else {
                     _imageURL = await _uploadMyRoomImage();
-                    await Firestore.instance.collection('myroom')
-                    .document(_myRoom.documentId)
-                    .collection('items')
-                    .add({
+                    await Firestore.instance
+                        .collection('myroom')
+                        .document(_myRoom.documentId)
+                        .collection('items')
+                        .add({
                       'title': _title,
                       'body': _body,
                       'imageURL': _imageURL,
@@ -227,23 +230,23 @@ class _CollectionPostState extends State<CollectionPost> {
             ],
           ),
           _loading
-          ? BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 0.1,
-              sigmaY: 0.1,
-            ),
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          )
-          : Container(),
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 0.1,
+                    sigmaY: 0.1,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                )
+              : Container(),
           _loading
-          ? Center(
-            child: CircularProgressIndicator(),
-          )
-          : Container(),
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(),
         ],
-      )
+      ),
     );
   }
 }

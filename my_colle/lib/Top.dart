@@ -30,10 +30,10 @@ class _TopState extends State<Top> {
               fit: BoxFit.cover,
             ),
           ),
-          Column(            
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Style.height(this._size.height/6.8),
+              Style.height(this._size.height / 6.8),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -88,7 +88,7 @@ class _TopState extends State<Top> {
                 ),
                 width: this._size.width - 20,
               ),
-              Style.height(this._size.height/3.4),
+              Style.height(this._size.height / 3.4),
               Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +106,7 @@ class _TopState extends State<Top> {
                               locale: Locale("ja", "JP"),
                             ),
                           ),
-                        ), 
+                        ),
                         decoration: BoxDecoration(
                           border: Border.all(color: Color(0xffFFFFFF)),
                           borderRadius: BorderRadius.circular(10),
@@ -133,7 +133,7 @@ class _TopState extends State<Top> {
                               locale: Locale("ja", "JP"),
                             ),
                           ),
-                        ), 
+                        ),
                         decoration: BoxDecoration(
                           border: Border.all(color: Color(0xffFFFFFF)),
                           borderRadius: BorderRadius.circular(10),
@@ -145,20 +145,24 @@ class _TopState extends State<Top> {
                         setState(() {
                           _loading = true;
                         });
-                        QuerySnapshot myroomDoc = await Firestore.instance.collection('myroom')
-                        .where('user', isEqualTo: Auth.authResult.user.uid).getDocuments();
+                        QuerySnapshot myroomDoc = await Firestore.instance
+                            .collection('myroom')
+                            .where('user', isEqualTo: Auth.authResult.user.uid)
+                            .getDocuments();
                         if (myroomDoc.documents.isNotEmpty) {
                           setState(() {
                             _loading = false;
                           });
-                          DocumentSnapshot userDoc = await Firestore.instance.collection('user')
-                          .document(myroomDoc.documents[0].data['user']).get();
+                          DocumentSnapshot userDoc = await Firestore.instance
+                              .collection('user')
+                              .document(myroomDoc.documents[0].data['user'])
+                              .get();
                           MyRoom myRoom = MyRoom(
                             myroomDoc.documents[0].data['user'],
                             userDoc.data['name'],
                             myroomDoc.documents[0].data['title'],
                             myroomDoc.documents[0].data['imageURL'],
-                            myroomDoc.documents[0].documentID
+                            myroomDoc.documents[0].documentID,
                           );
                           Navigator.pushNamed(
                             context,
@@ -186,21 +190,21 @@ class _TopState extends State<Top> {
             ],
           ),
           _loading
-          ? BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 0.1,
-              sigmaY: 0.1,
-            ),
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          )
-          : Container(),
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 0.1,
+                    sigmaY: 0.1,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                )
+              : Container(),
           _loading
-          ? Center(
-            child: CircularProgressIndicator(),
-          )
-          : Container(),
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(),
         ],
       ),
     );
