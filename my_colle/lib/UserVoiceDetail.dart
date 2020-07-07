@@ -7,22 +7,24 @@ import 'package:my_colle/Style.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'dto/ColleDetail.dart';
+import 'Auth.dart';
 
-class UserVoiceList extends StatefulWidget {
+class UserVoiceDetail extends StatefulWidget {
   @override
-  _UserVoiceListState createState() => _UserVoiceListState();
+  _UserVoiceDetailState createState() => _UserVoiceDetailState();
 }
 
-class _UserVoiceListState extends State<UserVoiceList> {
+class _UserVoiceDetailState extends State<UserVoiceDetail> {
   Size size;
   bool _loading = false;
   String _commentText;
   String _userId;
   String _userName;
+  DocumentSnapshot _doc;
   ColleDetail _colleDetail;
-  Map<String, ColleDetail> _colleDetailList;
   
   void _setCommenttText(String str) {
     setState(() {
@@ -72,7 +74,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
               ),
             ),
             // child: ListView(children: userVoiceWidgetList),
-            child: _UserVoiceList(),
+            child: _UserVoiceDetail(),
           ),
           _loading
           ? BackdropFilter(
@@ -97,113 +99,74 @@ class _UserVoiceListState extends State<UserVoiceList> {
     );
   }
 
-  Widget _UserVoiceList() {
-    this._colleDetailList = new Map<String, ColleDetail>();
+  Widget _UserVoiceDetail() {
     // 画面サイズ
     this.size = MediaQuery.of(context).size;
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('myroom')
-        .document(this._colleDetail.myroomId)
-        .collection('items')
-        .document(this._colleDetail.collection.collectionId)
-        .collection('comments')
-        .orderBy('postDatetime', descending: true)
-        .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) return Text('Error:');
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Text('Loading...');
-          default:
-            return ListView(
-              children: snapshot.data.documents.map((doc) {
-                return _createUserVoiceWidget(doc);
-              }).toList(),
-            );
-        }
-      },
+    return Column(
+      children: [
+        StreamBuilder<DocumentSnapshot>(
+          stream: Firestore.instance.collection('myroom')
+            .document(this._colleDetail.myroomId)
+            .collection('items')
+            .document(this._colleDetail.collection.collectionId)
+            .collection('comments')
+            .document(this._colleDetail.commentId)
+            .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error:');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Text('Loading...');
+              default:
+                return this._createUserVoiceWidget(snapshot.data);
+            }
+          },
+        ),
+        StreamBuilder<QuerySnapshot>(
+          stream: Firestore.instance.collection('myroom')
+            .document(this._colleDetail.myroomId)
+            .collection('items')
+            .document(this._colleDetail.collection.collectionId)
+            .collection('comments')
+            .document(this._colleDetail.commentId)
+            .collection('comments')
+            .orderBy('postDatetime', descending: false)
+            .snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) return Text('Error:');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Text('Loading...');
+              default:
+                return 
+                  Expanded(
+                    // width: this.size.width,
+                    // height: snapshot.data.documents.toList().length * 135.0,
+                    // alignment: Alignment.topCenter,
+                    child: ListView(
+                      children: snapshot.data.documents.map((doc2) {
+                        return _createUserVoiceWidget2(doc2, parentDocId: this._colleDetail.commentId);
+                      }).toList(),
+                    ),
+                  );
+            }
+          },
+        ),
+      ]
+      
     );
   }
 
   /// userVoiceのWidget作成
   ///
   Widget _createUserVoiceWidget(DocumentSnapshot doc) {
-    ColleDetail colleDetail = new ColleDetail(this._colleDetail.collection, this._colleDetail.myroomId);
-    colleDetail.commentId = doc.documentID;
-    return FlatButton(
-      child: Container(
-        // height: 100,
-        width: this.size.width,
-        padding: EdgeInsets.all(10.0),
-        margin: EdgeInsets.all(2.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xff0070c0)),
-          color: Colors.white,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(doc.data["userName"], style: Style.userVoiceNameText,),
-            Text(doc.data["commentText"], style: Style.userVoiceText,),
-            Style.height(16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
-                  child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
-                ),
-                _createReplyButton(doc.documentID),
-              ],
-            ),
-            StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('myroom')
-                .document(this._colleDetail.myroomId)
-                .collection('items')
-                .document(this._colleDetail.collection.collectionId)
-                .collection('comments')
-                .document(doc.documentID)
-                .collection('comments')
-                .snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasError) return Text('Error:');
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    return Text('Loading...');
-                  default:
-                    return 
-                      snapshot.data.documents.toList().length == 0 ? 
-                        Text('') 
-                        : Text(snapshot.data.documents.toList().length.toString() + '件の返信', style: TextStyle(color: Color(0xffbbbbbb)));
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-      padding: EdgeInsets.all(0.0),
-      onPressed: () {
-        Navigator.pushNamed(
-          this.context, 
-          '/UsrVcDtl',
-          arguments: colleDetail
-        );
-      },
-    );  
-    
-  }
-  
-  /// 返信行の作成
-  /// 
-  Widget _createUserVoiceWidget2(DocumentSnapshot doc,{String parentDocId}) {
     return Column(
-      // mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          width: this.size.width - 20,
+          // height: 100,
+          width: this.size.width,
           padding: EdgeInsets.all(10.0),
-          margin: EdgeInsets.only(left: 18.0),
+          margin: EdgeInsets.all(2.0),
           decoration: BoxDecoration(
             border: Border.all(color: Color(0xff0070c0)),
             color: Colors.white,
@@ -221,9 +184,42 @@ class _UserVoiceListState extends State<UserVoiceList> {
                     // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
                     child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
                   ),
-                  parentDocId == null 
-                  ? _createReplyButton(doc.documentID)
-                  : _createReplyButton(parentDocId),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+  
+  /// 返信行の作成
+  /// 
+  Widget _createUserVoiceWidget2(DocumentSnapshot doc,{String parentDocId}) {
+    return Column(
+      // mainAxisSize: MainAxisSize.max,
+      children: [
+        Container(
+          width: this.size.width - 20,
+          padding: EdgeInsets.all(10.0),
+          // margin: EdgeInsets.only(left: 18.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Color(0xff0070c0)),
+            color: Colors.white,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(doc.data["userName"], style: Style.userVoiceNameText,),
+              Text(doc.data["commentText"], style: Style.userVoiceText,),
+              Style.height(16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
+                    child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
+                  ),
                 ],
               ),
             ],
@@ -255,7 +251,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () {
-        _openModalBottomSheet();
+        _openModalBottomSheet(docId: this._colleDetail.commentId);
       },
     );
   }
@@ -326,24 +322,6 @@ class _UserVoiceListState extends State<UserVoiceList> {
         }
         this._commentText = "";
       },
-    );
-  }
-
-  /// 返信ボタン作成
-  /// (ユーザNoは画面遷移に使うかもだから、一応引数)
-  Widget _createReplyButton(String docId) {
-    return FlatButton(
-      child: Container(
-        width: 60.0,
-        height: 30.0,
-        child: Center(child: Text("返信", style: Style.replyButtonText,)),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xff59a2d6)),
-          color: Color(0xff59a2d6),
-        ),
-      ),
-      padding: EdgeInsets.all(0.0),
-      onPressed: () => _openModalBottomSheet(docId: docId),
     );
   }
   
