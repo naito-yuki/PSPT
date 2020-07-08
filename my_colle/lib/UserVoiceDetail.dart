@@ -23,7 +23,6 @@ class _UserVoiceDetailState extends State<UserVoiceDetail> {
   String _commentText;
   String _userId;
   String _userName;
-  DocumentSnapshot _doc;
   ColleDetail _colleDetail;
   
   void _setCommenttText(String str) {
@@ -92,7 +91,6 @@ class _UserVoiceDetailState extends State<UserVoiceDetail> {
             child: CircularProgressIndicator(),
           )
           : Container(),
-      
         ],
       ),
       floatingActionButton: _createPlusButton(),
@@ -247,7 +245,7 @@ class _UserVoiceDetailState extends State<UserVoiceDetail> {
           borderRadius: BorderRadius.circular(10),
           color: Color(0xffd96666).withOpacity(0.75),
         ),
-        child: Center(child:Text("+", style: Style.plusButtonText)), 
+        child: Center(child:Icon(Icons.message, color: Color(0xffFFFFFF).withOpacity(0.75))), 
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () {

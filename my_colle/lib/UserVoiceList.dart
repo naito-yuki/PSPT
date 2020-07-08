@@ -154,7 +154,6 @@ class _UserVoiceListState extends State<UserVoiceList> {
                   // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
                   child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
                 ),
-                _createReplyButton(doc.documentID),
               ],
             ),
             StreamBuilder<QuerySnapshot>(
@@ -192,47 +191,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
       },
     );  
     
-  }
-  
-  /// 返信行の作成
-  /// 
-  Widget _createUserVoiceWidget2(DocumentSnapshot doc,{String parentDocId}) {
-    return Column(
-      // mainAxisSize: MainAxisSize.max,
-      children: [
-        Container(
-          width: this.size.width - 20,
-          padding: EdgeInsets.all(10.0),
-          margin: EdgeInsets.only(left: 18.0),
-          decoration: BoxDecoration(
-            border: Border.all(color: Color(0xff0070c0)),
-            color: Colors.white,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(doc.data["userName"], style: Style.userVoiceNameText,),
-              Text(doc.data["commentText"], style: Style.userVoiceText,),
-              Style.height(16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                    // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
-                    child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
-                  ),
-                  parentDocId == null 
-                  ? _createReplyButton(doc.documentID)
-                  : _createReplyButton(parentDocId),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-        
+  }  
 
   /// Timestamp → String変換
   String convertTimestampToString(Timestamp timestamp) {
@@ -251,7 +210,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
           borderRadius: BorderRadius.circular(10),
           color: Color(0xffd96666).withOpacity(0.75),
         ),
-        child: Center(child:Text("+", style: Style.plusButtonText)), 
+        child: Center(child:Icon(Icons.message, color: Color(0xffFFFFFF).withOpacity(0.75))), 
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () {
@@ -326,24 +285,6 @@ class _UserVoiceListState extends State<UserVoiceList> {
         }
         this._commentText = "";
       },
-    );
-  }
-
-  /// 返信ボタン作成
-  /// (ユーザNoは画面遷移に使うかもだから、一応引数)
-  Widget _createReplyButton(String docId) {
-    return FlatButton(
-      child: Container(
-        width: 60.0,
-        height: 30.0,
-        child: Center(child: Text("返信", style: Style.replyButtonText,)),
-        decoration: BoxDecoration(
-          border: Border.all(color: Color(0xff59a2d6)),
-          color: Color(0xff59a2d6),
-        ),
-      ),
-      padding: EdgeInsets.all(0.0),
-      onPressed: () => _openModalBottomSheet(docId: docId),
     );
   }
   
