@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,8 +21,8 @@ class _UserVoiceListState extends State<UserVoiceList> {
   String _userId;
   String _userName;
   ColleDetail _colleDetail;
-  Map<String, ColleDetail> _colleDetailList;
-  
+//  Map<String, ColleDetail> _colleDetailList;
+
   void _setCommenttText(String str) {
     setState(() {
       _commentText = str;
@@ -32,7 +31,6 @@ class _UserVoiceListState extends State<UserVoiceList> {
 
   @override
   Widget build([BuildContext context]) {
-    
     FirebaseAuth.instance.currentUser().then((user) {
       this._userId = user.uid;
       this._userName = user.email.split("@")[0];
@@ -54,13 +52,13 @@ class _UserVoiceListState extends State<UserVoiceList> {
 
     return Scaffold(
       appBar: AppBar(
-        // title: Center(
-        //   child: Text(
-        //     'User\'s Voice',
-        //     // style: PsStyle.bigTytleStyle
-        //   ),
-        // ),
-      ),
+          // title: Center(
+          //   child: Text(
+          //     'User\'s Voice',
+          //     // style: PsStyle.bigTytleStyle
+          //   ),
+          // ),
+          ),
       body: Stack(
         children: [
           Container(
@@ -72,44 +70,44 @@ class _UserVoiceListState extends State<UserVoiceList> {
               ),
             ),
             // child: ListView(children: userVoiceWidgetList),
-            child: _UserVoiceList(),
+            child: _createUserVoiceList(),
           ),
           _loading
-          ? BackdropFilter(
-            filter: ImageFilter.blur(
-              sigmaX: 0.1,
-              sigmaY: 0.1,
-            ),
-            child: Container(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          )
-          : Container(),
+              ? BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 0.1,
+                    sigmaY: 0.1,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                  ),
+                )
+              : Container(),
           _loading
-          ? Center(
-            child: CircularProgressIndicator(),
-          )
-          : Container(),
-      
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(),
         ],
       ),
       floatingActionButton: _createPlusButton(),
     );
   }
 
-  Widget _UserVoiceList() {
-    this._colleDetailList = new Map<String, ColleDetail>();
+  Widget _createUserVoiceList() {
+//    this._colleDetailList = new Map<String, ColleDetail>();
     // 画面サイズ
     this.size = MediaQuery.of(context).size;
 
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('myroom')
-        .document(this._colleDetail.myroomId)
-        .collection('items')
-        .document(this._colleDetail.collection.collectionId)
-        .collection('comments')
-        .orderBy('postDatetime', descending: true)
-        .snapshots(),
+      stream: Firestore.instance
+          .collection('myroom')
+          .document(this._colleDetail.myroomId)
+          .collection('items')
+          .document(this._colleDetail.collection.collectionId)
+          .collection('comments')
+          .orderBy('postDatetime', descending: true)
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) return Text('Error:');
         switch (snapshot.connectionState) {
@@ -129,7 +127,8 @@ class _UserVoiceListState extends State<UserVoiceList> {
   /// userVoiceのWidget作成
   ///
   Widget _createUserVoiceWidget(DocumentSnapshot doc) {
-    ColleDetail colleDetail = new ColleDetail(this._colleDetail.collection, this._colleDetail.myroomId);
+    ColleDetail colleDetail = new ColleDetail(
+        this._colleDetail.collection, this._colleDetail.myroomId);
     colleDetail.commentId = doc.documentID;
     return FlatButton(
       child: Container(
@@ -144,37 +143,68 @@ class _UserVoiceListState extends State<UserVoiceList> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(doc.data["userName"], style: Style.userVoiceNameText,),
-            Text(doc.data["commentText"], style: Style.userVoiceText,),
+            // Text(
+            //   doc.data["userName"],
+            //   style: Style.userVoiceNameText,
+            // ),
+            StreamBuilder<DocumentSnapshot>(
+              stream: Firestore.instance
+                  .collection('user')
+                  .document(doc.data["userId"])
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasError) return Text('Error:');
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    return Text('Loading...');
+                  default:
+                    return Text(
+                      snapshot.data['name'],
+                      style: Style.userVoiceNameText,
+                    );
+                }
+              },
+            ),
+            Text(
+              doc.data["commentText"],
+              style: Style.userVoiceText,
+            ),
             Style.height(16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
                   // child: Text(doc["postDatetime"], style: TextStyle(color: Color(0xffbbbbbb))),
-                  child: Text(convertTimestampToString(doc.data["postDatetime"]), style: TextStyle(color: Color(0xffbbbbbb))),
+                  child: Text(
+                      convertTimestampToString(doc.data["postDatetime"]),
+                      style: TextStyle(color: Color(0xffbbbbbb))),
                 ),
               ],
             ),
             StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance.collection('myroom')
-                .document(this._colleDetail.myroomId)
-                .collection('items')
-                .document(this._colleDetail.collection.collectionId)
-                .collection('comments')
-                .document(doc.documentID)
-                .collection('comments')
-                .snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              stream: Firestore.instance
+                  .collection('myroom')
+                  .document(this._colleDetail.myroomId)
+                  .collection('items')
+                  .document(this._colleDetail.collection.collectionId)
+                  .collection('comments')
+                  .document(doc.documentID)
+                  .collection('comments')
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) return Text('Error:');
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                     return Text('Loading...');
                   default:
-                    return 
-                      snapshot.data.documents.toList().length == 0 ? 
-                        Text('') 
-                        : Text(snapshot.data.documents.toList().length.toString() + '件の返信', style: TextStyle(color: Color(0xffbbbbbb)));
+                    return snapshot.data.documents.toList().length == 0
+                        ? Text('')
+                        : Text(
+                            snapshot.data.documents.toList().length.toString() +
+                                '件の返信',
+                            style: TextStyle(color: Color(0xffbbbbbb)));
                 }
               },
             ),
@@ -183,22 +213,17 @@ class _UserVoiceListState extends State<UserVoiceList> {
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () {
-        Navigator.pushNamed(
-          this.context, 
-          '/UsrVcDtl',
-          arguments: colleDetail
-        );
+        Navigator.pushNamed(this.context, '/UsrVcDtl', arguments: colleDetail);
       },
-    );  
-    
-  }  
+    );
+  }
 
   /// Timestamp → String変換
   String convertTimestampToString(Timestamp timestamp) {
     var format = DateFormat('yyyy/MM/dd HH:mm');
     return format.format(timestamp.toDate().add(Duration(hours: 9)));
   }
-  
+
   /// 投稿ダイアログ出力用ボタン
   Widget _createPlusButton() {
     return FlatButton(
@@ -210,7 +235,9 @@ class _UserVoiceListState extends State<UserVoiceList> {
           borderRadius: BorderRadius.circular(10),
           color: Color(0xffd96666).withOpacity(0.75),
         ),
-        child: Center(child:Icon(Icons.message, color: Color(0xffFFFFFF).withOpacity(0.75))), 
+        child: Center(
+            child: Icon(Icons.message,
+                color: Color(0xffFFFFFF).withOpacity(0.75))),
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () {
@@ -220,7 +247,7 @@ class _UserVoiceListState extends State<UserVoiceList> {
   }
 
   /// 投稿ボタン作成
-  /// 
+  ///
   Widget _createSubmitButton({String docId}) {
     return FlatButton(
       child: Container(
@@ -233,13 +260,12 @@ class _UserVoiceListState extends State<UserVoiceList> {
           color: Color(0xffd96666).withOpacity(0.75),
         ),
         child: Center(
-          child:Text("投稿", 
-          style: TextStyle(
-            fontSize: 18,
-            color: Color(0xffFFFFFF),
-            fontWeight: FontWeight.bold,
-          )
-        )), 
+            child: Text("投稿",
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Color(0xffFFFFFF),
+                  fontWeight: FontWeight.bold,
+                ))),
       ),
       padding: EdgeInsets.all(0.0),
       onPressed: () async {
@@ -252,34 +278,36 @@ class _UserVoiceListState extends State<UserVoiceList> {
           });
           _buildDialog(context);
         } else {
-          if(docId == null || docId.isEmpty){
-            await Firestore.instance.collection('myroom')
-              .document(this._colleDetail.myroomId)
-              .collection('items')
-              .document(this._colleDetail.collection.collectionId)
-              .collection('comments')
-              .add({
-                'userId': this._userId,
-                'userName': this._userName,
-                'commentText': this._commentText,
-                'postDatetime': DateTime.now(),
+          if (docId == null || docId.isEmpty) {
+            await Firestore.instance
+                .collection('myroom')
+                .document(this._colleDetail.myroomId)
+                .collection('items')
+                .document(this._colleDetail.collection.collectionId)
+                .collection('comments')
+                .add({
+              'userId': this._userId,
+              'userName': this._userName,
+              'commentText': this._commentText,
+              'postDatetime': DateTime.now(),
             });
-          }else {
-            await Firestore.instance.collection('myroom')
-              .document(this._colleDetail.myroomId)
-              .collection('items')
-              .document(this._colleDetail.collection.collectionId)
-              .collection('comments')
-              .document(docId)
-              .collection('comments')
-              .add({
-                'userId': this._userId,
-                'userName': this._userName,
-                'commentText': this._commentText,
-                'postDatetime': DateTime.now(),
+          } else {
+            await Firestore.instance
+                .collection('myroom')
+                .document(this._colleDetail.myroomId)
+                .collection('items')
+                .document(this._colleDetail.collection.collectionId)
+                .collection('comments')
+                .document(docId)
+                .collection('comments')
+                .add({
+              'userId': this._userId,
+              'userName': this._userName,
+              'commentText': this._commentText,
+              'postDatetime': DateTime.now(),
             });
           }
-          
+
           _loading = false;
           Navigator.pop(context);
         }
@@ -287,51 +315,50 @@ class _UserVoiceListState extends State<UserVoiceList> {
       },
     );
   }
-  
+
   /// 返信用、投稿用ダイアログ出力
   ///
   void _openModalBottomSheet({String docId}) {
     showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    // width: this.size.width - 150,
-                    height: 100.0,
-                    margin: EdgeInsets.all(5.0),
-                    child: TextField(
-                      textAlign: TextAlign.left,
-                      maxLines: 3,
-                      maxLength: 50,
-                      onChanged: _setCommenttText,
-                    ),  
+        context: context,
+        builder: (BuildContext context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Container(
+                      // width: this.size.width - 150,
+                      height: 100.0,
+                      margin: EdgeInsets.all(5.0),
+                      child: TextField(
+                        textAlign: TextAlign.left,
+                        maxLines: 3,
+                        maxLength: 50,
+                        onChanged: _setCommenttText,
+                      ),
+                    ),
                   ),
-                ),
-                (docId == null || docId.isEmpty) ?
-                  _createSubmitButton()
-                  : _createSubmitButton(docId: docId),
-              ],
-            ),
-            Expanded(
-              child: Container(
-                // color: Colors.amber,
-                width: 100,
+                  (docId == null || docId.isEmpty)
+                      ? _createSubmitButton()
+                      : _createSubmitButton(docId: docId),
+                ],
               ),
-            ),
-          ],  
-        );        
-      }
-    );
+              Expanded(
+                child: Container(
+                  // color: Colors.amber,
+                  width: 100,
+                ),
+              ),
+            ],
+          );
+        });
   }
-  
+
   /// 未入力ダイアログ
-  /// 
+  ///
   _buildDialog(BuildContext context) {
     return showDialog(
       context: context,
