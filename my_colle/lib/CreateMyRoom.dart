@@ -164,40 +164,47 @@ class _CreateMyRoomState extends State<CreateMyRoom> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  FlatButton(
-                    child: Container(
-                      child: Icon(
-                        Icons.photo_camera,
-                        color: Colors.white,
+//
+                  Stack(
+                    children: <Widget>[
+                      FlatButton(
+                        child: Container(
+                          child: Icon(
+                            Icons.photo,
+                            color: Colors.white,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xffFFFFFF)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xffad0000).withOpacity(0.9),
+                          ),
+                          padding: EdgeInsets.all(5.0),
+                          margin: EdgeInsets.only(left: 60.0),
+                        ),
+                        onPressed: () {
+                          _getImageFromDevice(ImageSource.gallery);
+                        },
                       ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xffFFFFFF)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffad0000).withOpacity(0.9),
+                      FlatButton(
+                        child: Container(
+                          child: Icon(
+                            Icons.photo_camera,
+                            color: Colors.white,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xffFFFFFF)),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xffad0000).withOpacity(0.9),
+                          ),
+                          padding: EdgeInsets.all(5.0),
+                        ),
+                        onPressed: () {
+                          _getImageFromDevice(ImageSource.camera);
+                        },
                       ),
-                      padding: EdgeInsets.all(5.0),
-                    ),
-                    onPressed: () {
-                      _getImageFromDevice(ImageSource.camera);
-                    },
+                    ],
                   ),
-                  FlatButton(
-                    child: Container(
-                      child: Icon(
-                        Icons.photo,
-                        color: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xffFFFFFF)),
-                        borderRadius: BorderRadius.circular(10),
-                        color: Color(0xffad0000).withOpacity(0.9),
-                      ),
-                      padding: EdgeInsets.all(5.0),
-                    ),
-                    onPressed: () {
-                      _getImageFromDevice(ImageSource.gallery);
-                    },
-                  ),
+//
                 ],
               ),
               (_imageFile == null)

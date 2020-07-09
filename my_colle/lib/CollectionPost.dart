@@ -152,7 +152,7 @@ class _CollectionPostState extends State<CollectionPost> {
                             color: Color(0xffad0000).withOpacity(0.9),
                           ),
                           padding: EdgeInsets.all(5.0),
-                          margin: EdgeInsets.only(left: 100.0),
+                          margin: EdgeInsets.only(left: 60.0),
                         ),
                         onPressed: () {
                           _getImageFromDevice(ImageSource.gallery);
@@ -170,7 +170,7 @@ class _CollectionPostState extends State<CollectionPost> {
                             color: Color(0xffad0000).withOpacity(0.9),
                           ),
                           padding: EdgeInsets.all(5.0),
-                          margin: EdgeInsets.only(left: 25.0),
+//                          margin: EdgeInsets.only(left: 25.0),
                         ),
                         onPressed: () {
                           _getImageFromDevice(ImageSource.camera);
